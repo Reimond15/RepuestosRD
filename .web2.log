@@ -1,0 +1,19 @@
+env: load .env
+env: export EXPO_PUBLIC_SUPABASE_ANON_KEY EXPO_PUBLIC_SUPABASE_URL
+Starting project at C:\Users\Theki\Desktop\RepuestosRD
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Waiting on http://localhost:8082
+
+Logs for your project will appear below.
+Web Bundled 3333485ms node_modules\expo-router\entry.js (1183 modules)
+Web Bundled 41802ms node_modules\expo-router\entry.js (1 module)
+╬╗ Bundled 3334735ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+╬╗ Bundled 50977ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+╬╗ Bundled 603ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+Web Bundled 4862ms node_modules\expo-router\entry.js (1 module)
+╬╗ Bundled 142ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+Web Bundled 1500ms node_modules\expo-router\entry.js (1 module)

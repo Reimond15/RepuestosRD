@@ -1,0 +1,75 @@
+{
+  "expo": {
+    "name": "RepuestosRD",
+    "slug": "repuestosrd",
+    "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "repuestosrd",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0D0D0D",
+    "primaryColor": "#6B7A2F",
+    "ios": {
+      "icon": "./assets/images/icon.png",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.repuestosrd.app",
+      "buildNumber": "1"
+    },
+    "android": {
+      "package": "com.repuestosrd.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#0D0D0D",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png",
+      "name": "RepuestosRD",
+      "shortName": "RepuestosRD",
+      "description": "Repuestos para motocicletas, carros y guaguas en República Dominicana. Busca por marca, modelo y año.",
+      "themeColor": "#6B7A2F",
+      "backgroundColor": "#0D0D0D",
+      "lang": "es-DO",
+      "display": "standalone",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "RepuestosRD necesita ver tus fotos para que publiques las imágenes de tus repuestos."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0D0D0D",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 160
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f2593406-533f-4d4b-8974-13bca83ede27"
+      }
+    }
+  }
+}
