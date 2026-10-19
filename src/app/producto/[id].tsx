@@ -286,7 +286,7 @@ export default function PantallaProducto() {
                 </View>
 
                 <Text style={styles.ubicacionDireccion} variant="bodyMedium">
-                  {producto.zonas.length > 0
+                  {(producto.zonas ?? []).length > 0
                     ? producto.zonas.join(' · ')
                     : producto.tienda}
                 </Text>

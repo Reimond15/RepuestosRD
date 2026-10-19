@@ -6,6 +6,7 @@ import { ThemeProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ProveedorSesion } from '@/hooks/useSesion';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SetupRequired } from '@/components/SetupRequired';
 import { isConfigured } from '@/lib/supabase';
 import { colors, theme } from '@/theme';
@@ -25,21 +26,22 @@ export default function LayoutRaiz() {
         <ProveedorSesion>
           <StatusBar style="light" />
 
-          {/*
-            SIN claves de Supabase -> pantalla de guarda.
-            Se monta el tema igual, para que se vea el diseño.
-          */}
-          {!isConfigured ? (
-            <SetupRequired />
-          ) : (
-            <Stack
-              screenOptions={{
-                headerStyle: { backgroundColor: colors.surface },
-                headerTintColor: colors.text,
-                headerTitleStyle: { color: colors.text },
-                contentStyle: { backgroundColor: colors.background },
-              }}
-            >
+          <ErrorBoundary>
+            {/*
+              SIN claves de Supabase -> pantalla de guarda.
+              Se monta el tema igual, para que se vea el diseño.
+            */}
+            {!isConfigured ? (
+              <SetupRequired />
+            ) : (
+              <Stack
+                screenOptions={{
+                  headerStyle: { backgroundColor: colors.surface },
+                  headerTintColor: colors.text,
+                  headerTitleStyle: { color: colors.text },
+                  contentStyle: { backgroundColor: colors.background },
+                }}
+              >
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen
                 name="producto/[id]"
@@ -106,7 +108,8 @@ export default function LayoutRaiz() {
                 options={{ title: 'Eliminar mi cuenta', headerBackTitle: 'Volver' }}
               />
             </Stack>
-          )}
+            )}
+          </ErrorBoundary>
         </ProveedorSesion>
       </ThemeProvider>
     </SafeAreaProvider>

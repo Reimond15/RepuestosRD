@@ -29,7 +29,8 @@
       },
       "predictiveBackGestureEnabled": false,
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "web": {
@@ -47,9 +48,17 @@
     "plugins": [
       "expo-router",
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "RepuestosRD usa tu ubicación para mostrarte las tiendas y los repuestos más cercanos."
+        }
+      ],
+      [
         "expo-image-picker",
         {
-          "photosPermission": "RepuestosRD necesita ver tus fotos para que publiques las imágenes de tus repuestos."
+          "photosPermission": "RepuestosRD necesita ver tus fotos para que publiques las imágenes de tus repuestos.",
+          "cameraPermission": "RepuestosRD necesita la cámara para que tomes fotos de tus repuestos.",
+          "microphonePermission": false
         }
       ],
       [

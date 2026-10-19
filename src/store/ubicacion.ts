@@ -39,6 +39,16 @@ export const useUbicacion = create<StoreUbicacion>((set, get) => ({
     set({ estado: 'preguntando', error: null });
 
     try {
+      // El módulo nativo puede no estar en el binario (build viejo, Expo Go, web).
+      // Importar/usar expo-location es opcional: si no está, no rompemos nada.
+      if (typeof Location?.requestForegroundPermissionsAsync !== 'function') {
+        set({
+          estado: 'indisponible',
+          error: 'La ubicación no está disponible en este dispositivo.',
+        });
+        return false;
+      }
+
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         set({ estado: 'denegado' });
