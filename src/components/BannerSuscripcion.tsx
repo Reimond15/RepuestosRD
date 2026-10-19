@@ -53,7 +53,7 @@ function armarInfo(s: MiSuscripcion): Estilo {
         icono: 'store-alert-outline',
         color: colors.danger,
         titulo: 'Tu tienda está oculta',
-        mensaje: `Tu tienda no aparece en el catálogo. Reactivala pagando ${precioActual}${esFundadorVigente && s.fundador_hasta ? ` (precio de fundador vigente hasta el ${fechaCorta(s.fundador_hasta)})` : ` (después RD$${SUSCRIPCION.precioNormal}/mes)`}.`,
+        mensaje: `Tu tienda no aparece en el catálogo. Reactivala pagando ${precioActual}${esFundadorVigente && s.fundador_hasta ? ` (precio de fundador vigente hasta el ${fechaCorta(s.fundador_hasta)})` : ` (después pasa a ${SUSCRIPCION.precioNormalTexto})`}.`,
         pedirPago: true,
       };
     default:

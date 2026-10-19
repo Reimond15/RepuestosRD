@@ -189,7 +189,7 @@ Completá las preguntas de **"Data deletion"** dentro del Data safety:
 
 ## 5 · Después de publicar (operación)
 
-- **Suscripción**: revisá las tiendas vencidas y cobrá:
+- **Suscripción**: revisá las tiendas vencidas y cobrá (RD$100 fundador o RD$500 normal). Las fundadoras (primeras 25) duran 12 meses desde la marca:
   ```sql
   select nombre, prueba_hasta, pago_hasta, public.tienda_vigente(id) as vigente
     from public.tiendas order by created_at;
