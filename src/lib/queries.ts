@@ -24,6 +24,7 @@ import type {
   SinLeerPedido,
   SolicitudEliminacion,
   Tienda,
+  TiendaAdmin,
   TipoConCategoria,
   TipoReporte,
   UbicacionRetiro,
@@ -430,6 +431,47 @@ export async function eliminarTipo(id: string): Promise<void> {
   if (!db) throw new Error('Supabase no está configurado.');
 
   const { error } = await db.from('tipos_repuesto').delete().eq('id', id);
+  if (error) throw error;
+}
+
+// ============================================================================
+//  Tiendas (panel de administración)
+//
+//  Solo el admin puede leer y escribir: la RLS y las RPC `security definer`
+//  (`admin_*`) validan `es_admin()`. Si un no-admin llama, la base rechaza.
+// ============================================================================
+
+/** Todas las tiendas con su dueño y el estado de la suscripción. Solo admin. */
+export async function listarTiendasAdmin(): Promise<TiendaAdmin[]> {
+  if (!db) return [];
+
+  const { data, error } = await db.rpc('admin_listar_tiendas');
+  if (error) throw error;
+
+  return (data ?? []) as TiendaAdmin[];
+}
+
+/** Aprueba (true) o rechaza (false) una tienda. Solo admin. */
+export async function aprobarTienda(tiendaId: string, aprobar: boolean): Promise<void> {
+  if (!db) throw new Error('Supabase no está configurado.');
+
+  const { error } = await db.rpc('admin_aprobar_tienda', {
+    p_tienda_id: tiendaId,
+    p_aprobar: aprobar,
+  });
+
+  if (error) throw error;
+}
+
+/** Marca/desmarca una tienda como fundadora (RD$100/mes, tope 25). Solo admin. */
+export async function marcarFundadora(tiendaId: string, marcar: boolean): Promise<void> {
+  if (!db) throw new Error('Supabase no está configurado.');
+
+  const { error } = await db.rpc('admin_marcar_fundadora', {
+    p_tienda_id: tiendaId,
+    p_marcar: marcar,
+  });
+
   if (error) throw error;
 }
 

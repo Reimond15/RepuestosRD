@@ -210,13 +210,22 @@ export default function PantallaCuenta() {
 
         {/* ---------------- administración (solo admin) ---------------- */}
         {usuario?.rol === 'admin' ? (
-          <Button
-            mode="outlined"
-            icon="shape-outline"
-            onPress={() => router.push('/admin/tipos')}
-          >
-            Administrar tipos de repuesto
-          </Button>
+          <View style={styles.adminContenedor}>
+            <Button
+              mode="outlined"
+              icon="store-check-outline"
+              onPress={() => router.push('/admin/tiendas')}
+            >
+              Administrar tiendas
+            </Button>
+            <Button
+              mode="outlined"
+              icon="shape-outline"
+              onPress={() => router.push('/admin/tipos')}
+            >
+              Administrar tipos de repuesto
+            </Button>
+          </View>
         ) : null}
 
         {/* ---------------- placeholder etapas ---------------- */}
@@ -299,6 +308,8 @@ const styles = StyleSheet.create({
 
   botonIngresar: { marginTop: spacing.xs },
   botonSalir: { alignSelf: 'flex-start' },
+
+  adminContenedor: { gap: spacing.sm },
 
   banner: {
     backgroundColor: colors.surface,

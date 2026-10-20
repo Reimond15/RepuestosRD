@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { ThemeProvider } from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ProveedorSesion } from '@/hooks/useSesion';
@@ -22,7 +22,7 @@ export default function LayoutRaiz() {
 
   return (
     <SafeAreaProvider>
-      <ThemeProvider theme={theme}>
+      <PaperProvider theme={theme}>
         <ProveedorSesion>
           <StatusBar style="light" />
 
@@ -58,6 +58,10 @@ export default function LayoutRaiz() {
               <Stack.Screen
                 name="admin/tipos"
                 options={{ title: 'Tipos de repuesto', headerBackTitle: 'Volver' }}
+              />
+              <Stack.Screen
+                name="admin/tiendas"
+                options={{ title: 'Tiendas', headerBackTitle: 'Volver' }}
               />
               <Stack.Screen
                 name="calificar/[pedidoId]"
@@ -111,7 +115,7 @@ export default function LayoutRaiz() {
             )}
           </ErrorBoundary>
         </ProveedorSesion>
-      </ThemeProvider>
+      </PaperProvider>
     </SafeAreaProvider>
   );
 }

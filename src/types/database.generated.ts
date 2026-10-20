@@ -402,6 +402,35 @@ export type Database = {
     Functions: {
       es_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       mi_tienda_id: { Args: Record<PropertyKey, never>; Returns: string | null };
+      admin_aprobar_tienda: {
+        Args: { p_tienda_id: string; p_aprobar?: boolean };
+        Returns: undefined;
+      };
+      admin_marcar_fundadora: {
+        Args: { p_tienda_id: string; p_marcar?: boolean };
+        Returns: undefined;
+      };
+      admin_listar_tiendas: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          tienda_id: string;
+          tienda: string;
+          direccion: string | null;
+          ofrece_delivery: boolean;
+          costo_delivery: number;
+          aprobada: boolean;
+          dueno_id: string;
+          dueno: string;
+          correo_dueno: string;
+          telefono_dueno: string | null;
+          es_fundador: boolean;
+          fundador_hasta: string | null;
+          prueba_hasta: string | null;
+          pago_hasta: string | null;
+          vigente: boolean;
+          created_at: string;
+        }[];
+      };
     };
 
     Enums: {

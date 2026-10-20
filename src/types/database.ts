@@ -337,6 +337,30 @@ export interface ResenaProducto {
   created_at: string;
 }
 
+/**
+ * Una tienda del panel de administración (RPC `admin_listar_tiendas`).
+ * Trae los datos de la tienda + el nombre/correo del dueño + el estado de la
+ * suscripción, todo en una sola fila para la pantalla del admin.
+ */
+export interface TiendaAdmin {
+  tienda_id: UUID;
+  tienda: string;
+  direccion: string | null;
+  ofrece_delivery: boolean;
+  costo_delivery: number;
+  aprobada: boolean;
+  dueno_id: UUID;
+  dueno: string;
+  correo_dueno: string;
+  telefono_dueno: string | null;
+  es_fundador: boolean;
+  fundador_hasta: string | null;
+  prueba_hasta: string | null;
+  pago_hasta: string | null;
+  vigente: boolean;
+  created_at: string;
+}
+
 // ============================================================================
 //  Sesión
 // ============================================================================

@@ -56,10 +56,11 @@ export const PAGINAS_LEGALES = [
  *
  *  Google Play pide DOS vías:
  *    1. dentro de la app  → `/eliminar-cuenta`
- *    2. un enlace WEB     → `/legal/eliminar-cuenta` (esta constante)
+ *    2. un enlace WEB     → `URL_ELIMINACION_WEB` (GitHub Pages, sin instalar)
  *
- *  ⚠️ Cuando el dominio esté activo, actualizá `dominioWeb` con el real y
- *  pegá `URL_ELIMINACION_WEB` en Play Console (Data safety → Data deletion).
+ *  ⚠️ Si cambiás de dominio, actualizá `dominioWeb` (afecta ambas URLs).
+ *  Pegá `URL_ELIMINACION_WEB` en Play Console (Data safety → Data deletion) y
+ *  `URL_PRIVACIDAD_WEB` en la ficha de la tienda (Política de privacidad).
  * ============================================================================
  */
 
@@ -72,8 +73,8 @@ export const ELIMINACION = {
     'Entiendo que se eliminarán mi cuenta y mis datos personales.',
   /** Ruta pública (sirve en la web, sin instalar la app). */
   rutaWeb: '/legal/eliminar-cuenta',
-  /** Dominio previsto para la web pública. Actualizar cuando esté activo. */
-  dominioWeb: 'https://repuestosrd.app',
+  /** Dominio público de los documentos legales (GitHub Pages). */
+  dominioWeb: 'https://reimond15.github.io/RepuestosRD',
 } as const;
 
 /** Enlace `mailto:` que abre el correo con el pedido de eliminación listo. */
@@ -82,5 +83,8 @@ export const ENLACE_ELIMINACION_EMAIL = `mailto:${NEGOCIO.emailPrivacidad}?subje
 )}&body=${encodeURIComponent(ELIMINACION.cuerpo)}`;
 
 /** URL pública del recurso de eliminación (la que se pega en Play Console). */
-export const URL_ELIMINACION_WEB = `${ELIMINACION.dominioWeb}${ELIMINACION.rutaWeb}`;
+export const URL_ELIMINACION_WEB = `${ELIMINACION.dominioWeb}/eliminar-cuenta.html`;
+
+/** URL pública de la política de privacidad (Play Console → Política de privacidad). */
+export const URL_PRIVACIDAD_WEB = `${ELIMINACION.dominioWeb}/privacidad.html`;
 
