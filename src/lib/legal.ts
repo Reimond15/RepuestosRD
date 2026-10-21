@@ -21,10 +21,14 @@ export const NEGOCIO = {
   ciudad: 'Santo Domingo Oeste',
   pais: 'República Dominicana',
 
-  /** Canal de atención principal (queda público en los documentos). */
-  email: 'penareimond1@gmail.com',
-  /** Correo para ejercer derechos de privacidad. Hoy es el mismo. */
-  emailPrivacidad: 'penareimond1@gmail.com',
+  /**
+   * Buzón único de la plataforma. Se usa para TODO: soporte, privacidad,
+   * eliminación de cuenta y reportes de contenido. Un solo correo revisado a
+   * diario es más seguro que varios que se pueden quedar sin mirar.
+   */
+  email: 'soporte.repuestord@gmail.com',
+  /** Mismo buzón (ver arriba): los derechos de privacidad llegan acá. */
+  emailPrivacidad: 'soporte.repuestord@gmail.com',
   /** Sin teléfono público por ahora: la atención es por correo. */
   telefono: null as string | null,
   /** Sin horario fijo publicado; se responde por correo lo antes posible. */
@@ -32,7 +36,7 @@ export const NEGOCIO = {
 } as const;
 
 /** Fecha de la última revisión de los documentos legales. */
-export const LEGAL_ACTUALIZADO = '14 de octubre de 2026';
+export const LEGAL_ACTUALIZADO = '21 de octubre de 2026';
 
 /** Texto de contacto listo para incrustar en los documentos. */
 export const CONTACTO_TEXTO = `${NEGOCIO.email}`;

@@ -163,7 +163,7 @@ Completá las preguntas de **"Data deletion"** dentro del Data safety:
 | Descripción corta (80) | `Repuestos de motos, carros y guaguas en RD, por zona.` |
 | Descripción completa | Describí: buscar por marca/modelo/año, tiendas cercanas, pedido y chat interno, retiro o entrega. |
 | Categoría | Compras (o Estilo de vida) |
-| Email de contacto | `penareimond1@gmail.com` |
+| Email de contacto | `soporte.repuestord@gmail.com` |
 | Sitio web | `https://repuestosrd.app` |
 | Política de privacidad | `https://repuestosrd.app/legal/privacidad` |
 
