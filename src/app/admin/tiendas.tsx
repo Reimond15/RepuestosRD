@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Dialog, Portal, Text } from 'react-native-paper';
+import { Button, Dialog, Portal, Text, TextInput } from 'react-native-paper';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -9,10 +10,17 @@ import { WebShell } from '@/components/WebShell';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useSesion } from '@/hooks/useSesion';
 import { useTiendasAdmin } from '@/hooks/useTiendasAdmin';
-import { aprobarTienda, leerError, marcarFundadora } from '@/lib/queries';
+import {
+  aprobarTienda,
+  leerError,
+  listarVerificaciones,
+  marcarFundadora,
+  urlFotoVerificacion,
+  verificarTienda,
+} from '@/lib/queries';
 import { SUSCRIPCION } from '@/lib/constants';
 import { fechaCorta } from '@/lib/format';
-import type { TiendaAdmin } from '@/types/database';
+import type { TiendaAdmin, VerificacionAdmin } from '@/types/database';
 import { colors, radius, spacing } from '@/theme';
 
 /**
@@ -41,9 +49,40 @@ export default function PantallaAdminTiendas() {
     { tienda: TiendaAdmin; accion: 'rechazar' } | null
   >(null);
 
+  // Verificación con fotos: el estado se guarda por tienda y las URLs firmadas
+  // se piden solo al abrir el diálogo (expiran, no tiene sentido cachearlas).
+  const [verificaciones, setVerificaciones] = useState<Record<string, VerificacionAdmin>>({});
+  const [fotos, setFotos] = useState<{
+    tienda: TiendaAdmin;
+    urlFachada: string | null;
+    urlInterior: string | null;
+  } | null>(null);
+  const [cargandoFotos, setCargandoFotos] = useState(false);
+  const [notaRechazo, setNotaRechazo] = useState('');
+
   const pendientes = useMemo(() => tiendas.filter((t) => !t.aprobada), [tiendas]);
   const aprobadas = useMemo(() => tiendas.filter((t) => t.aprobada), [tiendas]);
   const fundadoras = useMemo(() => tiendas.filter((t) => t.es_fundador), [tiendas]);
+
+  // Trae las verificaciones (incluye las rutas de las fotos) cuando cambia la lista.
+  useEffect(() => {
+    if (!esAdmin) return;
+    let vigente = true;
+    listarVerificaciones()
+      .then((filas) => {
+        if (!vigente) return;
+        const mapa: Record<string, VerificacionAdmin> = {};
+        for (const f of filas) mapa[f.tienda_id] = f;
+        setVerificaciones(mapa);
+      })
+      .catch(() => {
+        // Si falla, el panel sigue funcionando sin la parte de verificación.
+      });
+    return () => {
+      vigente = false;
+    };
+    // `tiendas` cambia cada vez que se recarga el panel; sirve de disparador.
+  }, [esAdmin, tiendas]);
 
   const correr = async (id: string, accion: () => Promise<void>, ok: string) => {
     setOcupado(id);
@@ -87,6 +126,37 @@ export default function PantallaAdminTiendas() {
       t.es_fundador
         ? `Se quitó el precio de fundador a "${t.tienda}".`
         : `"${t.tienda}" ahora paga ${SUSCRIPCION.precioFundadorTexto} por 12 meses.`,
+    );
+  };
+
+  /** Abre el diálogo con las fotos (pidiendo URLs firmadas temporales). */
+  const abrirFotos = async (t: TiendaAdmin) => {
+    const v = verificaciones[t.tienda_id];
+    setNotaRechazo('');
+    setFotos({ tienda: t, urlFachada: null, urlInterior: null });
+    setCargandoFotos(true);
+    try {
+      const [urlFachada, urlInterior] = await Promise.all([
+        urlFotoVerificacion(v?.foto_fachada ?? null),
+        urlFotoVerificacion(v?.foto_interior ?? null),
+      ]);
+      setFotos({ tienda: t, urlFachada, urlInterior });
+    } catch {
+      setFotos({ tienda: t, urlFachada: null, urlInterior: null });
+    } finally {
+      setCargandoFotos(false);
+    }
+  };
+
+  const resolverVerificacion = (t: TiendaAdmin, aprobar: boolean) => {
+    const nota = aprobar ? null : notaRechazo.trim() || null;
+    setFotos(null);
+    void correr(
+      t.tienda_id,
+      () => verificarTienda(t.tienda_id, aprobar, nota),
+      aprobar
+        ? `Se verificó "${t.tienda}". Ya tiene la insignia en el catálogo.`
+        : `Se rechazó la verificación de "${t.tienda}".`,
     );
   };
 
@@ -164,8 +234,10 @@ export default function PantallaAdminTiendas() {
                       key={t.tienda_id}
                       tienda={t}
                       ocupado={ocupado === t.tienda_id}
+                      verificacion={verificaciones[t.tienda_id] ?? null}
                       onAprobar={() => alternarAprobacion(t)}
                       onFundadora={() => alternarFundadora(t)}
+                      onVerificar={() => void abrirFotos(t)}
                       fundadoras={fundadoras.length}
                     />
                   ))
@@ -187,8 +259,10 @@ export default function PantallaAdminTiendas() {
                       key={t.tienda_id}
                       tienda={t}
                       ocupado={ocupado === t.tienda_id}
+                      verificacion={verificaciones[t.tienda_id] ?? null}
                       onAprobar={() => alternarAprobacion(t)}
                       onFundadora={() => alternarFundadora(t)}
+                      onVerificar={() => void abrirFotos(t)}
                       fundadoras={fundadoras.length}
                     />
                   ))
@@ -225,6 +299,81 @@ export default function PantallaAdminTiendas() {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+
+      <Portal>
+        <Dialog visible={fotos !== null} onDismiss={() => setFotos(null)}>
+          <Dialog.Title>Verificar tienda</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium" style={styles.dialogSubtitulo}>
+              {fotos?.tienda.tienda}
+            </Text>
+
+            {cargandoFotos ? (
+              <Text style={styles.muted} variant="bodySmall">
+                Cargando fotos…
+              </Text>
+            ) : !fotos?.urlFachada && !fotos?.urlInterior ? (
+              <Text style={styles.muted} variant="bodySmall">
+                Esta tienda todavía no subió fotos para verificar.
+              </Text>
+            ) : (
+              <View style={styles.fotosDialogo}>
+                <View style={styles.fotoDialogoBox}>
+                  <Text style={styles.fotoDialogoTitulo} variant="labelSmall">
+                    Fachada
+                  </Text>
+                  {fotos?.urlFachada ? (
+                    <Image source={{ uri: fotos.urlFachada }} style={styles.fotoDialogo} contentFit="cover" />
+                  ) : (
+                    <View style={[styles.fotoDialogo, styles.fotoVacia]}>
+                      <MaterialCommunityIcons name="image-off-outline" size={22} color={colors.textFaint} />
+                    </View>
+                  )}
+                </View>
+                <View style={styles.fotoDialogoBox}>
+                  <Text style={styles.fotoDialogoTitulo} variant="labelSmall">
+                    Interior
+                  </Text>
+                  {fotos?.urlInterior ? (
+                    <Image source={{ uri: fotos.urlInterior }} style={styles.fotoDialogo} contentFit="cover" />
+                  ) : (
+                    <View style={[styles.fotoDialogo, styles.fotoVacia]}>
+                      <MaterialCommunityIcons name="image-off-outline" size={22} color={colors.textFaint} />
+                    </View>
+                  )}
+                </View>
+              </View>
+            )}
+
+            <TextInput
+              mode="outlined"
+              label="Motivo (solo si rechazás)"
+              value={notaRechazo}
+              onChangeText={setNotaRechazo}
+              style={styles.inputNota}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setFotos(null)}>Cerrar</Button>
+            <Button
+              textColor={colors.danger}
+              onPress={() => {
+                if (fotos) resolverVerificacion(fotos.tienda, false);
+              }}
+            >
+              Rechazar
+            </Button>
+            <Button
+              mode="contained"
+              onPress={() => {
+                if (fotos) resolverVerificacion(fotos.tienda, true);
+              }}
+            >
+              Verificar
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </WebShell>
   );
 }
@@ -232,17 +381,23 @@ export default function PantallaAdminTiendas() {
 function TarjetaTienda({
   tienda,
   ocupado,
+  verificacion,
   onAprobar,
   onFundadora,
+  onVerificar,
   fundadoras,
 }: {
   tienda: TiendaAdmin;
   ocupado: boolean;
+  verificacion: VerificacionAdmin | null;
   onAprobar: () => void;
   onFundadora: () => void;
+  onVerificar: () => void;
   fundadoras: number;
 }) {
   const topeFundadoras = fundadoras >= SUSCRIPCION.limiteFundadores;
+  const estadoVerif = verificacion?.estado ?? 'sin_enviar';
+  const hayFotos = Boolean(verificacion?.foto_fachada || verificacion?.foto_interior);
 
   return (
     <View style={styles.tarjeta}>
@@ -305,6 +460,15 @@ function TarjetaTienda({
             texto={`Fundador hasta ${fechaCorta(tienda.fundador_hasta)}`}
           />
         ) : null}
+        {tienda.verificada ? (
+          <Estado icono="check-decagram" color={colors.primaryLight} texto="Verificada" />
+        ) : estadoVerif === 'enviada' ? (
+          <Estado icono="clock-outline" color={colors.warning} texto="Verificación en revisión" />
+        ) : estadoVerif === 'rechazada' ? (
+          <Estado icono="close-circle-outline" color={colors.danger} texto="Verificación rechazada" />
+        ) : (
+          <Estado icono="shield-outline" color={colors.textFaint} texto="Sin verificar" />
+        )}
       </View>
 
       <View style={styles.acciones}>
@@ -331,6 +495,18 @@ function TarjetaTienda({
           style={styles.accionBoton}
         >
           {tienda.es_fundador ? 'Quitar fundador' : 'Marcar fundadora'}
+        </Button>
+
+        <Button
+          mode="outlined"
+          compact
+          icon="image-search-outline"
+          onPress={onVerificar}
+          disabled={ocupado}
+          textColor={hayFotos ? colors.primaryLight : colors.textFaint}
+          style={styles.accionBoton}
+        >
+          {hayFotos ? 'Ver fotos' : 'Sin fotos'}
         </Button>
       </View>
     </View>
@@ -417,4 +593,12 @@ const styles = StyleSheet.create({
   accionBoton: { flexGrow: 1 },
 
   nota: { color: colors.textFaint, textAlign: 'center' },
+
+  dialogSubtitulo: { color: colors.textMuted, marginBottom: spacing.sm },
+  fotosDialogo: { flexDirection: 'row', gap: spacing.md },
+  fotoDialogoBox: { flex: 1, gap: spacing.xs },
+  fotoDialogoTitulo: { color: colors.textMuted },
+  fotoDialogo: { width: '100%', height: 130, borderRadius: radius.md, backgroundColor: colors.surfaceAlt },
+  fotoVacia: { alignItems: 'center', justifyContent: 'center' },
+  inputNota: { marginTop: spacing.md, backgroundColor: colors.surface },
 });

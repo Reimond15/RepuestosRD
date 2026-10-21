@@ -53,6 +53,7 @@ export type Database = {
           costo_delivery: number;
           zonas: string[];
           aprobada: boolean;
+          verificada: boolean;
           created_at: string;
         };
         Insert: {
@@ -65,6 +66,7 @@ export type Database = {
           costo_delivery?: number;
           zonas?: string[];
           aprobada?: boolean;
+          verificada?: boolean;
           created_at?: string;
         };
         Update: {
@@ -75,12 +77,53 @@ export type Database = {
           costo_delivery?: number;
           zonas?: string[];
           aprobada?: boolean;
+          verificada?: boolean;
         };
         Relationships: [
           {
             foreignKeyName: 'tiendas_dueno_id_fkey';
             columns: ['dueno_id'];
             referencedRelation: 'usuarios';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+
+      tiendas_verificacion: {
+        Row: {
+          tienda_id: string;
+          foto_fachada: string | null;
+          foto_interior: string | null;
+          estado: string;
+          nota_rechazo: string | null;
+          enviada_en: string | null;
+          verificada_en: string | null;
+          actualizado_en: string;
+        };
+        Insert: {
+          tienda_id: string;
+          foto_fachada?: string | null;
+          foto_interior?: string | null;
+          estado?: string;
+          nota_rechazo?: string | null;
+          enviada_en?: string | null;
+          verificada_en?: string | null;
+          actualizado_en?: string;
+        };
+        Update: {
+          foto_fachada?: string | null;
+          foto_interior?: string | null;
+          estado?: string;
+          nota_rechazo?: string | null;
+          enviada_en?: string | null;
+          verificada_en?: string | null;
+          actualizado_en?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'tiendas_verificacion_tienda_id_fkey';
+            columns: ['tienda_id'];
+            referencedRelation: 'tiendas';
             referencedColumns: ['id'];
           },
         ];
@@ -349,6 +392,7 @@ export type Database = {
           producto: string;
           tienda_id: string;
           tienda: string;
+          tienda_verificada: boolean;
           categoria_id: string;
           categoria_nombre: string;
           precio_actual: number;
@@ -365,6 +409,7 @@ export type Database = {
           producto: string;
           tienda_id: string;
           tienda: string;
+          tienda_verificada: boolean;
           categoria_id: string;
           categoria_nombre: string;
           precio_actual: number;
@@ -388,6 +433,7 @@ export type Database = {
           tienda_id: string;
           tienda: string;
           tienda_logo: string | null;
+          tienda_verificada: boolean;
           ofrece_delivery: boolean;
           costo_delivery: number;
           zonas: string[];
@@ -428,7 +474,42 @@ export type Database = {
           prueba_hasta: string | null;
           pago_hasta: string | null;
           vigente: boolean;
+          verificada: boolean;
+          estado_verificacion: string;
           created_at: string;
+        }[];
+      };
+      admin_listar_verificaciones: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          tienda_id: string;
+          tienda: string;
+          correo_dueno: string;
+          estado: string;
+          foto_fachada: string | null;
+          foto_interior: string | null;
+          nota_rechazo: string | null;
+          enviada_en: string | null;
+          verificada_en: string | null;
+        }[];
+      };
+      admin_verificar_tienda: {
+        Args: { p_tienda_id: string; p_aprobar?: boolean; p_nota?: string | null };
+        Returns: undefined;
+      };
+      enviar_verificacion_tienda: {
+        Args: { p_fachada: string; p_interior: string };
+        Returns: undefined;
+      };
+      mi_verificacion_tienda: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          estado: string;
+          foto_fachada: string | null;
+          foto_interior: string | null;
+          nota_rechazo: string | null;
+          enviada_en: string | null;
+          verificada_en: string | null;
         }[];
       };
     };

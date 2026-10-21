@@ -197,6 +197,18 @@ export default function PantallaProducto() {
                 <Text style={styles.tienda} variant="bodySmall">
                   {producto.tienda}
                 </Text>
+                {producto.tienda_verificada ? (
+                  <View style={styles.insigniaTienda}>
+                    <MaterialCommunityIcons
+                      name="check-decagram"
+                      size={14}
+                      color={colors.primaryLight}
+                    />
+                    <Text style={styles.insigniaTiendaTexto} variant="labelSmall">
+                      Verificada
+                    </Text>
+                  </View>
+                ) : null}
               </View>
 
               <Text variant="headlineSmall" style={styles.nombre}>
@@ -514,6 +526,18 @@ const styles = StyleSheet.create({
 
   filaTienda: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   tienda: { color: colors.textMuted },
+  insigniaTienda: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    marginLeft: spacing.xs,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  insigniaTiendaTexto: { color: colors.primaryLight },
 
   nombre: { color: colors.text },
 

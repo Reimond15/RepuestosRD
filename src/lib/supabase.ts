@@ -81,4 +81,6 @@ export const supabase: SupabaseClient<Database> | null = isConfigured
 export const BUCKETS = {
   productos: 'productos',
   logos: 'logos',
+  /** Privado: fotos de verificación de la tienda. Solo dueño + admin. */
+  verificacion: 'verificacion',
 } as const;

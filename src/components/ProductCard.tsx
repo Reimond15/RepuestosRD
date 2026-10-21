@@ -26,6 +26,8 @@ export type ProductoResumen = {
   total_calificaciones: number;
   categoria_nombre: string;
   imagenes?: string[] | null;
+  /** true si la tienda está verificada → muestra la insignia. */
+  tienda_verificada?: boolean;
   /** undefined = no se sabe (vistas de ranking sin stock) → no se marca agotado */
   stock?: number;
   /** Distancia a la tienda, en km. Solo se muestra si la app tiene posición. */
@@ -132,6 +134,13 @@ function ProductCardBase({
             <Text style={styles.tiendaTexto} numberOfLines={1} variant="bodySmall">
               {recortar(producto.tienda, 26)}
             </Text>
+            {producto.tienda_verificada ? (
+              <MaterialCommunityIcons
+                name="check-decagram"
+                size={13}
+                color={colors.primaryLight}
+              />
+            ) : null}
           </View>
         ) : null}
 

@@ -28,6 +28,8 @@ import type {
   TipoConCategoria,
   TipoReporte,
   UbicacionRetiro,
+  VerificacionAdmin,
+  VerificacionTienda,
 } from '@/types/database';
 
 /**
@@ -470,6 +472,113 @@ export async function marcarFundadora(tiendaId: string, marcar: boolean): Promis
   const { error } = await db.rpc('admin_marcar_fundadora', {
     p_tienda_id: tiendaId,
     p_marcar: marcar,
+  });
+
+  if (error) throw error;
+}
+
+// ============================================================================
+//  Verificación de tiendas (fotos de fachada + interior)
+//
+//  Las fotos viven en el bucket PRIVADO `verificacion`. Acá se sube el archivo,
+//  se devuelve la RUTA (no una URL pública) y se ve por URL firmada temporal.
+//  La insignia pública (`tiendas.verificada`) la sincroniza un trigger en la base.
+// ============================================================================
+
+/**
+ * Sube una foto de verificación al bucket privado, dentro de la carpeta del
+ * dueño: `verificacion/<dueno_id>/<archivo>`. Esa es la ruta que exige la
+ * política de Storage. Devuelve la RUTA guardada (para firmarla después).
+ */
+export async function subirFotoVerificacion(
+  duenoId: string,
+  archivo: { uri: string; mimeType?: string | null },
+): Promise<string> {
+  if (!db) throw new Error('Supabase no está configurado.');
+
+  const respuesta = await fetch(archivo.uri);
+  const bytes = await respuesta.arrayBuffer();
+
+  const tipo = archivo.mimeType ?? 'image/jpeg';
+  const extension = tipo.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg';
+  const aleatorio = Math.random().toString(36).slice(2, 8);
+  const ruta = `${duenoId}/${Date.now()}-${aleatorio}.${extension}`;
+
+  const { error } = await db.storage.from(BUCKETS.verificacion).upload(ruta, bytes, {
+    contentType: tipo,
+    upsert: false,
+  });
+  if (error) throw error;
+
+  return ruta;
+}
+
+/**
+ * URL firmada temporal de una foto privada de verificación.
+ * Devuelve null si la ruta viene vacía. Sirve para el dueño y para el admin.
+ */
+export async function urlFotoVerificacion(
+  ruta: string | null,
+  segundos = 3600,
+): Promise<string | null> {
+  if (!db || !ruta) return null;
+
+  const { data, error } = await db.storage
+    .from(BUCKETS.verificacion)
+    .createSignedUrl(ruta, segundos);
+
+  if (error) return null;
+  return data?.signedUrl ?? null;
+}
+
+/** La tienda manda sus 2 fotos (fachada + interior) a revisión. */
+export async function enviarVerificacion(
+  fachada: string,
+  interior: string,
+): Promise<void> {
+  if (!db) throw new Error('Supabase no está configurado.');
+
+  const { error } = await db.rpc('enviar_verificacion_tienda', {
+    p_fachada: fachada,
+    p_interior: interior,
+  });
+
+  if (error) throw error;
+}
+
+/** Estado y fotos de la verificación de la tienda del usuario actual. */
+export async function miVerificacion(): Promise<VerificacionTienda | null> {
+  if (!db) return null;
+
+  const { data, error } = await db.rpc('mi_verificacion_tienda');
+  if (error) throw error;
+
+  const filas = (data ?? []) as VerificacionTienda[];
+  return filas[0] ?? null;
+}
+
+/** Verificaciones de todas las tiendas (con las rutas de las fotos). Solo admin. */
+export async function listarVerificaciones(): Promise<VerificacionAdmin[]> {
+  if (!db) return [];
+
+  const { data, error } = await db.rpc('admin_listar_verificaciones');
+  if (error) throw error;
+
+  return (data ?? []) as VerificacionAdmin[];
+}
+
+/** Aprueba (true) o rechaza (false) la verificación de una tienda. Solo admin. */
+export async function verificarTienda(
+  tiendaId: string,
+  aprobar: boolean,
+  nota: string | null = null,
+): Promise<void> {
+  if (!db) throw new Error('Supabase no está configurado.');
+
+  const { error } = await db.rpc('admin_verificar_tienda', {
+    p_tienda_id: tiendaId,
+    p_aprobar: aprobar,
+    p_nota: nota,
   });
 
   if (error) throw error;

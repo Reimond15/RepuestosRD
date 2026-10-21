@@ -76,6 +76,10 @@ export default function LayoutRaiz() {
                 options={{ title: 'Mis repuestos', headerBackTitle: 'Volver' }}
               />
               <Stack.Screen
+                name="verificar-tienda"
+                options={{ title: 'Verificar mi tienda', headerBackTitle: 'Volver' }}
+              />
+              <Stack.Screen
                 name="mi-producto/[id]"
                 options={{ title: 'Repuesto', headerBackTitle: 'Volver' }}
               />

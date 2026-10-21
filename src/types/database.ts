@@ -34,7 +34,30 @@ export interface Tienda {
   latitude: number | null;
   longitude: number | null;
   aprobada: boolean;
+  /** true si el admin verificó la tienda con fotos. Da la insignia en el catálogo. */
+  verificada: boolean;
   created_at: string;
+}
+
+/**
+ * Estado de verificación de una tienda (RPC `mi_verificacion_tienda`).
+ * Las fotos viven en el bucket PRIVADO `verificacion`; acá se guarda la RUTA,
+ * no una URL pública. Se ven por URL firmada temporal (dueño + admin).
+ */
+export interface VerificacionTienda {
+  estado: 'sin_enviar' | 'enviada' | 'verificada' | 'rechazada';
+  foto_fachada: string | null;
+  foto_interior: string | null;
+  nota_rechazo: string | null;
+  enviada_en: string | null;
+  verificada_en: string | null;
+}
+
+/** Una verificación de tienda para el panel de administración. */
+export interface VerificacionAdmin extends VerificacionTienda {
+  tienda_id: UUID;
+  tienda: string;
+  correo_dueno: string;
 }
 
 export interface Categoria {
@@ -87,6 +110,8 @@ export interface ProductoMasVendido {
   producto: string;
   tienda_id: UUID;
   tienda: string;
+  /** true si la tienda está verificada (insignia). */
+  tienda_verificada?: boolean;
   /** Null en la base; opcionales en TS para que los mocks no tengan que repetirlos. */
   tienda_lat?: number | null;
   tienda_lng?: number | null;
@@ -107,6 +132,8 @@ export interface ProductoMejorCalificado {
   producto: string;
   tienda_id: UUID;
   tienda: string;
+  /** true si la tienda está verificada (insignia). */
+  tienda_verificada?: boolean;
   /** Null en la base; opcionales en TS para que los mocks no tengan que repetirlos. */
   tienda_lat?: number | null;
   tienda_lng?: number | null;
@@ -134,6 +161,8 @@ export interface ProductoCatalogo {
   tienda_id: UUID;
   tienda: string;
   tienda_logo: string | null;
+  /** true si la tienda está verificada (insignia en la ficha). */
+  tienda_verificada?: boolean;
   /** Null en la base; opcionales en TS para que los mocks no tengan que repetirlos. */
   tienda_lat?: number | null;
   tienda_lng?: number | null;
@@ -358,6 +387,10 @@ export interface TiendaAdmin {
   prueba_hasta: string | null;
   pago_hasta: string | null;
   vigente: boolean;
+  /** true si el admin ya verificó la tienda con fotos. */
+  verificada: boolean;
+  /** Estado de la verificación con fotos: sin_enviar | enviada | verificada | rechazada. */
+  estado_verificacion: string;
   created_at: string;
 }
 

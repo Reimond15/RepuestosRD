@@ -127,18 +127,39 @@ export default function PantallaCuenta() {
                 ? 'Ya podés subir productos y recibir pedidos.'
                 : 'Un administrador tiene que aprobar tu tienda antes de que puedas publicar productos.'}
             </Text>
+            {tienda.verificada ? (
+              <View style={styles.insigniaFila}>
+                <MaterialCommunityIcons
+                  name="check-decagram"
+                  size={16}
+                  color={colors.primaryLight}
+                />
+                <Text style={styles.insigniaTexto} variant="labelSmall">
+                  Tienda verificada
+                </Text>
+              </View>
+            ) : null}
           </View>
         ) : null}
 
         {/* ---------------- panel de la tienda ---------------- */}
         {esTienda && tienda ? (
-          <Button
-            mode="contained"
-            icon="package-variant-closed"
-            onPress={() => router.push('/mis-productos')}
-          >
-            Mis repuestos
-          </Button>
+          <View style={styles.botonesTienda}>
+            <Button
+              mode="contained"
+              icon="package-variant-closed"
+              onPress={() => router.push('/mis-productos')}
+            >
+              Mis repuestos
+            </Button>
+            <Button
+              mode="outlined"
+              icon={tienda.verificada ? 'check-decagram' : 'shield-check-outline'}
+              onPress={() => router.push('/verificar-tienda')}
+            >
+              {tienda.verificada ? 'Mi verificación' : 'Verificar mi tienda'}
+            </Button>
+          </View>
         ) : null}
 
         {/* ---------------- acceso rápido ---------------- */}
@@ -321,6 +342,10 @@ const styles = StyleSheet.create({
   },
   bannerTitulo: { color: colors.warning },
   bannerTexto: { color: colors.textMuted, lineHeight: 18 },
+  insigniaFila: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: spacing.xs },
+  insigniaTexto: { color: colors.primaryLight },
+
+  botonesTienda: { gap: spacing.sm },
 
   filaTexto: { color: colors.text, flex: 1 },
   filaValor: { color: colors.textFaint, textAlign: 'right' },
