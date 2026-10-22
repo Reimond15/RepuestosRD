@@ -1,22 +1,35 @@
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { Image } from 'expo-image';
 
 import { colors } from '@/theme';
 
 type Props = {
-  /** Tamaño del ícono de la rueda. */
+  /** Tamaño del ícono (el círculo con el carrito). */
   tamano?: number;
   /** Muestra el nombre al lado. */
   conNombre?: boolean;
 };
 
-/** Logo de la app: rueda + nombre. El ícono va en `colores.primary`. */
+/**
+ * Logo de la app: el carrito de compras con herramientas, dentro de un
+ * círculo blanco, más el nombre.
+ *
+ * El carrito es azul oscuro sobre transparente (`logo-app.png`), así que no
+ * se vería sobre el fondo negro de la app. Por eso va montado sobre un
+ * círculo blanco, igual que el ícono de Android: se ve nítido en cualquier
+ * fondo y mantiene una sola identidad visual.
+ */
 export function AppLogo({ tamano = 34, conNombre = true }: Props) {
   return (
     <View style={styles.cont}>
-      <View style={[styles.rueda, { width: tamano, height: tamano, borderRadius: tamano / 2 }]}>
-        <MaterialCommunityIcons name="cog" size={tamano * 0.62} color={colors.black} />
+      <View style={[styles.circulo, { width: tamano, height: tamano, borderRadius: tamano / 2 }]}>
+        <Image
+          source={require('@/assets/images/logo-app.png')}
+          style={{ width: tamano * 0.62, height: tamano * 0.62 }}
+          contentFit="contain"
+          accessibilityLabel="RepuestosRD"
+        />
       </View>
 
       {conNombre ? (
@@ -34,8 +47,8 @@ export function AppLogo({ tamano = 34, conNombre = true }: Props) {
 const styles = StyleSheet.create({
   cont: { flexDirection: 'row', alignItems: 'center', gap: 10 },
 
-  rueda: {
-    backgroundColor: colors.primary,
+  circulo: {
+    backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
