@@ -40,16 +40,6 @@ const formaInicial = (): Formas => ({
   notas: '',
 });
 
-/**
- * Tramitar pedido.
- *
- * Un pedido es de UNA tienda, así que el carrito (que puede juntar varias)
- * se parte en un pedido por tienda, cada uno con su entrega y dirección.
- *
- * Antes de crear, se revalidan precios y stock contra la base: un precio
- * que cambió después de agregar al carrito se actualiza y se le avisa al
- * cliente para que confirme el total nuevo.
- */
 export default function PantallaCheckout() {
   const router = useRouter();
   const { usuario, cargando } = useSesion();
@@ -66,12 +56,9 @@ export default function PantallaCheckout() {
   const [hechos, setHechos] = useState<string[]>([]);
   const [acepta, setAcepta] = useState(false);
 
-  // Cuando el carrito tiene repuestos de varias tiendas, el cliente puede
-  // elegir entre una sola dirección de entrega o una distinta por tienda.
   const [modoDireccion, setModoDireccion] = useState<'unica' | 'por-tienda'>('unica');
   const [direccionUnica, setDireccionUnica] = useState('');
 
-  // ---------------- agrupar por tienda ----------------
   const porTienda = useMemo(() => {
     const grupos = new Map<string, LineaCarrito[]>();
     for (const l of lineas) {
@@ -92,7 +79,6 @@ export default function PantallaCheckout() {
     }
   }, [cargando, usuario, router]);
 
-  // ---------------- datos de las tiendas (delivery/zonas) ----------------
   useEffect(() => {
     if (porTienda.length === 0) return;
 
@@ -110,11 +96,8 @@ export default function PantallaCheckout() {
 
   const tiendaDe = (id: string): Tienda | undefined => tiendas.find((t) => t.id === id);
 
-  // Solo tiene sentido compartir la dirección si hay más de una tienda; con
-  // una sola, cada formulario usa su propio campo (aunque el modo sea "única").
   const compartida = porTienda.length > 1 && modoDireccion === 'unica';
 
-  /** La dirección que le corresponde a una tienda (o '' si es retiro). */
   const direccionPara = (tiendaId: string): string => {
     const f = formas[tiendaId] ?? formaInicial();
     if (f.entrega !== 'delivery') return '';
@@ -129,7 +112,6 @@ export default function PantallaCheckout() {
     return mapa;
   }, [lineas]);
 
-  // ---------------- confirmar ----------------
   const confirmar = async () => {
     if (!usuario || porTienda.length === 0) return;
 
@@ -142,7 +124,6 @@ export default function PantallaCheckout() {
       return;
     }
 
-    // 1. validar formularios
     for (const g of porTienda) {
       const f = formas[g.tiendaId] ?? formaInicial();
       if (f.entrega === 'delivery' && !direccionPara(g.tiendaId).trim()) {
@@ -155,7 +136,6 @@ export default function PantallaCheckout() {
       }
     }
 
-    // 2. revalidar precios y stock contra la base
     const ids = porTienda.flatMap((g) => g.lineas.map((l) => l.producto_id));
 
     let actuales: Awaited<ReturnType<typeof preciosYStock>>;
@@ -180,7 +160,6 @@ export default function PantallaCheckout() {
       }
     }
 
-    // aplica los cambios al carrito (precios, y saca lo que ya no tiene stock)
     revalidar(actuales);
 
     if (avisos.length > 0) {
@@ -190,7 +169,6 @@ export default function PantallaCheckout() {
       return;
     }
 
-    // 3. crear un pedido por tienda (con el estado fresquito del carrito)
     setEnviando(true);
     try {
       const estado = useCarrito.getState();
@@ -227,7 +205,6 @@ export default function PantallaCheckout() {
     }
   };
 
-  // ---------------- éxito ----------------
   if (hechos.length > 0) {
     return (
       <WebShell>
@@ -284,7 +261,6 @@ export default function PantallaCheckout() {
             keyboardShouldPersistTaps="handled"
             automaticallyAdjustKeyboardInsets
           >
-          {/* Con varias tiendas, el cliente decide si todo va al mismo lugar */}
           {porTienda.length > 1 ? (
             <View style={styles.grupo}>
               <View style={styles.grupoCabecera}>
@@ -481,10 +457,6 @@ export default function PantallaCheckout() {
   );
 }
 
-/**
- * Fila con un botón de radio y su etiqueta. Se usa para elegir si todas las
- * tiendas del carrito entregan en la misma dirección.
- */
 function RadioFila({
   etiqueta,
   seleccionado,

@@ -11,7 +11,6 @@ export type Seccion = {
   titulo?: string;
   parrafos?: string[];
   vinetas?: string[];
-  /** Bloque destacado (avisos importantes). */
   aviso?: string;
 };
 
@@ -19,19 +18,9 @@ type Props = {
   titulo: string;
   intro?: string;
   secciones: Seccion[];
-  /** Contenido extra al final (enlaces, formularios de contacto…). */
   children?: ReactNode;
 };
 
-/**
- * ============================================================================
- *  Documento legal.
- *
- *  Plantilla única para la política de privacidad, los términos, las cookies,
- *  los reembolsos y el aviso legal. Mantiene el mismo look y la misma
- *  cabecera (responsable + última actualización) en todas las páginas.
- * ============================================================================
- */
 export function LegalDoc({ titulo, intro, secciones, children }: Props) {
   const insets = useSafeAreaInsets();
 

@@ -6,20 +6,12 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { colors, fontSize } from '@/theme';
 
 type Props = {
-  /** Promedio de 0 a 5. Si es null o 0, no hay calificaciones. */
   promedio: number | null | undefined;
   total?: number | null;
-  /** Tamaño del ícono de cada estrella. */
   size?: number;
-  /** Muestra el número al lado, ej: "4.6 (124)" */
   mostrarNumero?: boolean;
 };
 
-/**
- * Fila de estrellas doradas (#F2B705).
- * Si el producto no tiene calificaciones, muestra "Sin calificaciones"
- * en texto secundario en vez de cinco estrellas grises (que parece un error).
- */
 function StarsBase({
   promedio,
   total,

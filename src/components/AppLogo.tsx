@@ -5,21 +5,10 @@ import { Image } from 'expo-image';
 import { colors } from '@/theme';
 
 type Props = {
-  /** Tamaño del ícono (el círculo con el carrito). */
   tamano?: number;
-  /** Muestra el nombre al lado. */
   conNombre?: boolean;
 };
 
-/**
- * Logo de la app: el carrito de compras con herramientas, dentro de un
- * círculo blanco, más el nombre.
- *
- * El carrito es azul oscuro sobre transparente (`logo-app.png`), así que no
- * se vería sobre el fondo negro de la app. Por eso va montado sobre un
- * círculo blanco, igual que el ícono de Android: se ve nítido en cualquier
- * fondo y mantiene una sola identidad visual.
- */
 export function AppLogo({ tamano = 34, conNombre = true }: Props) {
   return (
     <View style={styles.cont}>

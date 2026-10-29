@@ -39,17 +39,6 @@ import type { MotivoReporte } from '@/types/database';
 const hora = (iso: string) =>
   new Date(iso).toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' });
 
-/**
- * ============================================================================
- *  Chat del pedido (anti-elusión).
- *
- *  Comprador y tienda se escriben acá, sin teléfono ni correo. El hilo se
- *  actualiza solo (Realtime) y se marcan como leídos los mensajes al abrirlo.
- *
- *  Google Play (contenido de usuarios): desde el menú de arriba se puede
- *  REPORTAR a la contraparte y BLOQUEARLA (deja de ver sus mensajes).
- * ============================================================================
- */
 export default function PantallaChat() {
   const insets = useSafeAreaInsets();
   const { pedidoId, titulo } = useLocalSearchParams<{ pedidoId: string; titulo?: string }>();
@@ -70,7 +59,6 @@ export default function PantallaChat() {
   const [procesando, setProcesando] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
 
-  // Al abrir: quién es la contraparte y si ya la tengo bloqueada.
   useEffect(() => {
     if (!usuario || !pedidoId) return;
 
@@ -89,7 +77,6 @@ export default function PantallaChat() {
     };
   }, [usuario, pedidoId]);
 
-  // Al bloquear, ocultamos de una los mensajes de esa persona (además de la RLS).
   const visibles =
     bloqueado && usuario ? mensajes.filter((m) => m.autor_id === usuario.id) : mensajes;
 
@@ -378,9 +365,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     gap: 2,
   },
-  // Mis mensajes: fondo verde claro y texto negro (contraste 6.7:1).
   burbujaMia: { backgroundColor: colors.primaryLight, borderBottomRightRadius: 4 },
-  // Los de la tienda: fondo elevado y texto claro (contraste 14:1).
   burbujaOtra: { backgroundColor: colors.surfaceAlt, borderBottomLeftRadius: 4 },
   contenidoMio: { color: colors.black },
   contenidoOtra: { color: colors.text },

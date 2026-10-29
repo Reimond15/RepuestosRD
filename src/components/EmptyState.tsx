@@ -12,7 +12,6 @@ type Props = {
   accion?: ReactNode;
 };
 
-/** Para pantallas todavía vacías o con datos de prueba. */
 export function EmptyState({ icono = 'package-variant-closed', titulo, mensaje, accion }: Props) {
   return (
     <View style={styles.cont}>

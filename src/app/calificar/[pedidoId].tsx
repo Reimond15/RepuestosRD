@@ -23,14 +23,6 @@ import { colors, radius, spacing } from '@/theme';
 
 type Borrador = { estrellas: number; comentario: string };
 
-/**
- * Deja la reseña de un pedido entregado: una calificación (estrellas +
- * comentario) por cada repuesto del pedido.
- *
- * La base valida todo (pedido "entregado", del propio cliente, producto del
- * pedido) en el trigger `validar_calificacion`; acá solo se arma la pantalla
- * y se muestra el error tal cual si algo falla.
- */
 export default function PantallaCalificar() {
   const { pedidoId } = useLocalSearchParams<{ pedidoId: string }>();
   const router = useRouter();
@@ -112,7 +104,6 @@ export default function PantallaCalificar() {
         });
       }
 
-      // Recarga lo calificado para reflejar las reseñas recién guardadas.
       const calificaciones = await buscarCalificacionesDePedido(pedido.id);
       setExistentes(Object.fromEntries(calificaciones.map((c) => [c.producto_id, c])));
       setBorradores({});

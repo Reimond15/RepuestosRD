@@ -17,13 +17,6 @@ import { etiquetaCondicion } from '@/lib/constants';
 import type { Producto } from '@/types/database';
 import { colors, fontSize, radius, spacing } from '@/theme';
 
-/**
- * Panel de productos de la tienda: lista TODOS sus repuestos (activos e
- * inactivos) y permite publicar uno nuevo o editar los existentes.
- *
- * La RLS solo deja escribir en los productos de la propia tienda, y el
- * trigger `validar_producto_tienda` exige que la tienda esté aprobada.
- */
 export default function PantallaMisProductos() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -33,7 +26,6 @@ export default function PantallaMisProductos() {
   const { productos, cargando, error, recargar } = useMisProductos(tienda?.id ?? null);
   const { tipos } = useTipos();
 
-  // Al volver del formulario, refrescamos la lista.
   useFocusEffect(
     useCallback(() => {
       if (tienda?.id) recargar();

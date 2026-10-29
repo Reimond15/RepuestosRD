@@ -3,32 +3,8 @@ import type {
   ProductoMejorCalificado,
 } from '@/types/database';
 
-/**
- * ============================================================================
- *  DATOS DE PRUEBA — Etapa 1
- * ============================================================================
- *  La app todavía no lee de Supabase. Estos mocks tienen EXACTAMENTE la misma
- *  forma que traen las vistas `productos_mas_vendidos` y
- *  `productos_mejor_calificados`, así que en la Etapa 3 se cambia
- *
- *      MOCK_MAS_VENDIDOS
- *  por
- *      supabase.from('productos_mas_vendidos').select('*')
- *
- *  y las pantallas siguen funcionando sin tocarlas.
- *
- *  Las imágenes van vacías a propósito: la tarjeta dibuja su propio
- *  placeholder, así no dependemos de ninguna URL externa.
- * ============================================================================
- */
-
 const ahora = Date.now();
 const hace = (dias: number) => new Date(ahora - dias * 86_400_000).toISOString();
-
-// ============================================================================
-//  products_mas_vendidos
-//  `categoria_nombre` es lo que usa el filtro de la pantalla.
-// ============================================================================
 
 export const MOCK_MAS_VENDIDOS: ProductoMasVendido[] = [
   {
@@ -145,11 +121,6 @@ export const MOCK_MAS_VENDIDOS: ProductoMasVendido[] = [
   },
 ];
 
-// ============================================================================
-//  products_mejor_calificados
-//  La vista real solo trae productos con mínimo 3 calificaciones.
-// ============================================================================
-
 export const MOCK_MEJOR_CALIFICADOS: ProductoMejorCalificado[] = [
   {
     producto_id: 'a3',
@@ -224,10 +195,6 @@ export const MOCK_MEJOR_CALIFICADOS: ProductoMejorCalificado[] = [
     unidades_vendidas: 197,
   },
 ];
-
-// ============================================================================
-//  TEXTO DE LA PANTALLA DE INICIO
-// ============================================================================
 
 export const CIUDADES = [
   'Santo Domingo Oeste',

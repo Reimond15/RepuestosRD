@@ -19,7 +19,6 @@ type Estilo = {
   color: string;
   titulo: string;
   mensaje: string;
-  /** true cuando hay que mostrar "escríbenos para pagar". */
   pedirPago: boolean;
 };
 
@@ -69,10 +68,6 @@ function armarInfo(s: MiSuscripcion): Estilo {
   }
 }
 
-/**
- * Aviso del estado de la suscripción para el panel de la tienda.
- * No es un error: informa cuánto le queda y, si hace falta, cómo pagar.
- */
 export function BannerSuscripcion({ suscripcion }: { suscripcion: MiSuscripcion }) {
   const info = armarInfo(suscripcion);
 

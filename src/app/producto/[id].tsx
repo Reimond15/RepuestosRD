@@ -19,9 +19,6 @@ import { useUbicacion } from '@/store/ubicacion';
 import { colors, fontSize, radius, spacing } from '@/theme';
 import type { MotivoReporte } from '@/types/database';
 
-/**
- * Detalle de un producto del catálogo público + "Agregar al carrito".
- */
 const fechaResena = (iso: string) =>
   new Date(iso).toLocaleDateString('es-DO', {
     day: 'numeric',
@@ -111,7 +108,6 @@ export default function PantallaProducto() {
       },
       cantidad,
     );
-    // null = todo bien
     setAviso(mensaje ?? 'Agregado al carrito ✔');
   };
 
@@ -163,7 +159,6 @@ export default function PantallaProducto() {
           </View>
         ) : producto ? (
           <>
-            {/* ---------- imagen ---------- */}
             <View style={styles.imagenBox}>
               {sinImagen ? (
                 <View style={styles.placeholder}>
@@ -186,7 +181,6 @@ export default function PantallaProducto() {
               ) : null}
             </View>
 
-            {/* ---------- datos ---------- */}
             <View style={styles.datos}>
               <View style={styles.filaTienda}>
                 <MaterialCommunityIcons
@@ -284,7 +278,6 @@ export default function PantallaProducto() {
                 </View>
               ) : null}
 
-              {/* ---------- ubicación de la tienda ---------- */}
               <View style={styles.ubicacion}>
                 <View style={styles.ubicacionCabecera}>
                   <MaterialCommunityIcons
@@ -348,7 +341,6 @@ export default function PantallaProducto() {
                 ) : null}
               </View>
 
-              {/* ---------- reseñas ---------- */}
               <View style={styles.resenas}>
                 <View style={styles.resenasCabecera}>
                   <MaterialCommunityIcons
@@ -397,7 +389,6 @@ export default function PantallaProducto() {
                 )}
               </View>
 
-              {/* ---------- agregar al carrito ---------- */}
               <View style={styles.comprar}>
                 <View style={styles.stepper}>
                   <Button

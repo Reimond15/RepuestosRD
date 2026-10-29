@@ -9,12 +9,6 @@ type Estado = {
   error: string | null;
 };
 
-/**
- * Todos los repuestos de una tienda (activos e inactivos) para el panel.
- *
- * Igual que el resto de hooks: sin tienda no consulta nada, y el reintento
- * re-dispara el efecto con un contador.
- */
 export function useMisProductos(tiendaId: string | null) {
   const [estado, setEstado] = useState<Estado>({
     productos: [],

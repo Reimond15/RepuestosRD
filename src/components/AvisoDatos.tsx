@@ -8,22 +8,12 @@ type Modo = 'ok' | 'cargando' | 'error' | 'demo' | 'vacio';
 
 type Props = {
   modo: Modo;
-  /** Mensaje del error, cuando modo es "error". */
   error?: string | null;
   cargando?: boolean;
   onReintentar?: () => void;
-  /** Texto cuando no hay nada que mostrar. */
   vacio?: string;
 };
 
-/**
- * ============================================================================
- *  Aviso pequeño de estado: carga, error o "estás viendo datos de prueba".
- *
- *  Vive en la parte de arriba de las pantallas. Es deliberadamente
- *  discreto: si la app funciona, no tiene que ocupar espacio.
- * ============================================================================
- */
 export function AvisoDatos({ modo, error, cargando, onReintentar, vacio }: Props) {
   if (modo === 'cargando') {
     return (

@@ -15,16 +15,6 @@ type Props = {
   cargando?: boolean;
 };
 
-/**
- * ============================================================================
- *  Sección de productos, adaptable:
- *   · teléfono   → carrusel horizontal, tarjeta de 176px
- *   · tablet     → rejilla de 3 columnas
- *   · escritorio → rejilla de 4 columnas
- *
- *  En escritorio NO hay "Ver todo": se muestran todos de una vez.
- * ============================================================================
- */
 export function SectionProductos({
   titulo,
   subtitulo,

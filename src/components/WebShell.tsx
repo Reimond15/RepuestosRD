@@ -11,25 +11,9 @@ import { colors, fontSize, radius, shadow, spacing } from '@/theme';
 
 type Props = {
   children: ReactNode;
-  /**
-   * Muestra la barra de arriba con logo, buscar y carrito.
-   * Por defecto sale sola en tablet/escritorio, que es donde aporta.
-   */
   conHeader?: boolean;
 };
 
-/**
- * ============================================================================
- *  Contenedor adaptable.
- *
- *  En teléfono: nada, el contenido usa el ancho completo.
- *  En escritorio: el contenido se limita a ~1400px y se centra, para que
- *  no quede una línea de 3000px de ancho que nadie puede leer.
- *
- *  La barra de arriba no se dibuja en el teléfono: ahí la navegación ya
- *  está abajo y hacer las dos sería tirar espacio.
- * ============================================================================
- */
 export function WebShell({ children, conHeader }: Props) {
   const { anchoContenido, navLateral } = useResponsive();
   const conBarra = conHeader ?? navLateral;
@@ -44,7 +28,6 @@ export function WebShell({ children, conHeader }: Props) {
   );
 }
 
-/** Barra de arriba: logo, acceso rápido a buscar y botón del carrito. */
 export function HeaderEscritorio() {
   const router = useRouter();
   const articulos = useCarrito((s) => s.lineas.reduce((acc, l) => acc + l.cantidad, 0));

@@ -7,22 +7,9 @@ import { colors } from '@/theme';
 type Props = {
   valor: boolean;
   onCambiar: (v: boolean) => void;
-  /**
-   * Texto antes de los enlaces. Por defecto el del registro.
-   * Ej.: "Acepto los " o "Confirmo que leí y acepto los ".
-   */
   prefijo?: string;
 };
 
-/**
- * ============================================================================
- *  Casilla de consentimiento legal.
- *
- *  Nunca viene premarcada y es obligatoria: el usuario debe aceptar los
- *  Términos y la Política de Privacidad antes de continuar. Los nombres son
- *  enlaces tocables a las páginas correspondientes.
- * ============================================================================
- */
 export function ConsentimientoLegal({ valor, onCambiar, prefijo }: Props) {
   const router = useRouter();
 

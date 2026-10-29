@@ -10,21 +10,10 @@ const Contexto = createContext<Sesion>({
   cargando: true,
 });
 
-/**
- * Sesión del usuario + su fila en `usuarios`.
- *
- * El trigger de la base crea la fila de `usuarios` en el mismo instante del
- * registro, así que acá solo hay que leerla. Si por alguna razón no existe
- * todavía (registro a medias, email sin confirmar), devolvemos null.
- *
- * En la Etapa 2 se le agrega el login con email y contraseña.
- */
 export function ProveedorSesion({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [tienda, setTienda] = useState<Tienda | null>(null);
 
-  // Sin Supabase configurado no hay nada que esperar: arrancamos ya "cargado"
-  // y la sesión queda cerrada. Evita un setState sincrónico dentro del efecto.
   const [cargando, setCargando] = useState(supabase !== null);
 
   useEffect(() => {
@@ -43,7 +32,6 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
       if (!vigente) return;
       setUsuario(fila);
 
-      // si es tienda, cargamos su ficha (para ver si está aprobada)
       if (fila?.rol === 'tienda') {
         const { data: t } = await supabase!
           .from('tiendas')
@@ -69,7 +57,6 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
         if (vigente) setCargando(false);
       });
 
-    // reacciona a login y logout
     const { data: listener } = supabase.auth.onAuthStateChange((_evento, sesion: Session | null) => {
       if (!sesion?.user) {
         setUsuario(null);

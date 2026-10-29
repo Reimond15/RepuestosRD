@@ -15,18 +15,8 @@ import { useVerificacionTienda } from '@/hooks/useVerificacionTienda';
 import { enviarVerificacion, leerError, subirFotoVerificacion } from '@/lib/queries';
 import { colors, fontSize, radius, spacing } from '@/theme';
 
-/** Una foto elegida pero todavía sin subir. */
 type Foto = { uri: string; mimeType?: string | null };
 
-/**
- * ============================================================================
- *  Verificación de la tienda con fotos (fachada + interior)
- *
- *  Es OPCIONAL: no bloquea la aprobación de la tienda. Solo busca la insignia
- *  "Tienda verificada" en el catálogo. Las fotos se suben a un bucket PRIVADO
- *  (`verificacion`), visible solo para el dueño y el admin.
- * ============================================================================
- */
 export default function PantallaVerificarTienda() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -116,7 +106,6 @@ export default function PantallaVerificarTienda() {
     );
   }
 
-  // Previsualización: lo recién elegido o, si no hay nada nuevo, lo ya enviado.
   const previaFachada = fachada?.uri ?? urlFachada;
   const previaInterior = interior?.uri ?? urlInterior;
 
@@ -143,7 +132,6 @@ export default function PantallaVerificarTienda() {
             administrador.
           </Text>
 
-          {/* ---------------- estado actual ---------------- */}
           {cargando ? (
             <Text style={styles.muted} variant="bodyMedium">
               Cargando estado…
@@ -163,7 +151,6 @@ export default function PantallaVerificarTienda() {
             <TarjetaEstado estado={estado} notaRechazo={verificacion?.nota_rechazo ?? null} />
           )}
 
-          {/* ---------------- fotos ---------------- */}
           {!verificada && !cargando ? (
             <View style={styles.grupo}>
               <Text style={styles.grupoTitulo} variant="titleSmall">
@@ -237,7 +224,6 @@ export default function PantallaVerificarTienda() {
   );
 }
 
-/** Cartel con el estado de la verificación. */
 function TarjetaEstado({
   estado,
   notaRechazo,
@@ -294,7 +280,6 @@ function TarjetaEstado({
   );
 }
 
-/** Botón grande con previsualización de la foto elegida. */
 function BotonFoto({
   etiqueta,
   icono,

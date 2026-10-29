@@ -10,13 +10,6 @@ type Estado = {
   error: string | null;
 };
 
-/**
- * Tipos de repuesto + categorías, para la pantalla de administración.
- *
- * Mismo patrón que los demás hooks: el `setState` siempre cae dentro del
- * callback de una promesa (nunca sincrónico dentro del efecto), y el
- * reintento re-dispara el efecto con un contador.
- */
 export function useTipos() {
   const [estado, setEstado] = useState<Estado>({
     tipos: [],

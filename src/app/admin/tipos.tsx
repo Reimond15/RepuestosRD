@@ -21,15 +21,6 @@ import { actualizarTipo, crearTipo, eliminarTipo, leerError } from '@/lib/querie
 import type { TipoConCategoria } from '@/types/database';
 import { colors, radius, spacing } from '@/theme';
 
-/**
- * Administración de los tipos de repuesto. Solo para el rol `admin`:
- * la RLS de `tipos_repuesto` (`tipos_write_admin`) rechaza el resto.
- *
- * Sirve para curar los datos: corregir nombres raros, borrar duplicados
- * (por ejemplo "Sistema de escape" junto a "Escape") y agregar los que
- * falten. Los tipos los usan los productos, así que no se puede borrar uno
- * que esté en uso (FK `on delete restrict`).
- */
 export default function PantallaTiposRepuesto() {
   const insets = useSafeAreaInsets();
   const { esMovil } = useResponsive();
@@ -45,7 +36,6 @@ export default function PantallaTiposRepuesto() {
   const [aviso, setAviso] = useState<{ tipo: 'error' | 'ok'; texto: string } | null>(null);
   const [borrando, setBorrando] = useState<TipoConCategoria | null>(null);
 
-  // La primera categoría es el valor por defecto mientras el usuario no elige.
   const categoriaEfectiva = categoriaId || categorias[0]?.id || '';
 
   const limpiarFormulario = () => {
@@ -168,7 +158,6 @@ export default function PantallaTiposRepuesto() {
             </View>
           ) : null}
 
-          {/* ---------------- formulario ---------------- */}
           <View style={styles.tarjeta}>
             <Text style={styles.tarjetaTitulo} variant="titleSmall">
               {editandoId ? 'Editar tipo' : 'Nuevo tipo'}
@@ -217,7 +206,6 @@ export default function PantallaTiposRepuesto() {
             </View>
           </View>
 
-          {/* ---------------- lista ---------------- */}
           {cargando ? (
             <Text style={styles.muted} variant="bodyMedium">
               Cargando tipos…

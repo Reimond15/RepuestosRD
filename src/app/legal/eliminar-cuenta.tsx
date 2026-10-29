@@ -6,17 +6,6 @@ import { LegalDoc } from '@/components/LegalDoc';
 import { ENLACE_ELIMINACION_EMAIL, NEGOCIO } from '@/lib/legal';
 import { colors, radius, spacing } from '@/theme';
 
-/**
- * ============================================================================
- *  ELIMINAR CUENTA Y DATOS — recurso WEB
- *
- *  Requisito de Google Play: un enlace web donde se pueda pedir la eliminación
- *  de la cuenta SIN instalar ni abrir la app. Esta página es pública y sale en
- *  el build web (`/legal/eliminar-cuenta`), así que sirve como ese enlace.
- *
- *  Cada paso es claro y el correo funciona como vía directa.
- * ============================================================================
- */
 export default function PantallaEliminarCuentaWeb() {
   const abrirCorreo = () => {
     void Linking.openURL(ENLACE_ELIMINACION_EMAIL);

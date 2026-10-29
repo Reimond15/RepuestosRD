@@ -10,13 +10,6 @@ import { leerError } from '@/lib/queries';
 import { supabase } from '@/lib/supabase';
 import { colors, radius, spacing } from '@/theme';
 
-/**
- * Ingreso (email + contraseña) y registro con datos mínimos.
- *
- * El registro le manda el rol y los datos en `options.data`; el trigger
- * `manejar_nuevo_usuario` de la base crea la fila de `usuarios` y, si el
- * rol es `tienda`, también la tienda (pendiente de aprobación).
- */
 export default function PantallaIngresar() {
   const router = useRouter();
   const { despues } = useLocalSearchParams<{ despues?: string }>();
@@ -24,11 +17,9 @@ export default function PantallaIngresar() {
 
   const [modo, setModo] = useState<'ingresar' | 'crear'>('ingresar');
 
-  // campos comunes
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // campos del registro
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
   const [rol, setRol] = useState<'cliente' | 'tienda'>('cliente');
@@ -80,7 +71,6 @@ export default function PantallaIngresar() {
               rol,
               nombre: nombre.trim(),
               telefono: telefono.trim() || null,
-              // Constancia del consentimiento legal dado al registrarse.
               acepta_terminos: new Date().toISOString(),
               ...(rol === 'tienda'
                 ? {
@@ -93,7 +83,6 @@ export default function PantallaIngresar() {
         });
         if (err) throw err;
 
-        // si el proyecto exige confirmar el email, no hay sesión todavía
         if (!data.session) {
           setModo('ingresar');
           setError(

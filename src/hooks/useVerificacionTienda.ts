@@ -6,21 +6,12 @@ import type { VerificacionTienda } from '@/types/database';
 
 type Estado = {
   verificacion: VerificacionTienda | null;
-  /** URL firmada de la fachada (bucket privado). */
   urlFachada: string | null;
-  /** URL firmada del interior (bucket privado). */
   urlInterior: string | null;
   cargando: boolean;
   error: string | null;
 };
 
-/**
- * El estado de verificación de la tienda del usuario actual.
- *
- * Solo dispara si el usuario es `tienda`: un comprador nunca la pide, y la
- * base igual la rechazaría. Las fotos viven en un bucket privado, así que
- * además de la RPC se piden URLs firmadas temporales para poder mostrarlas.
- */
 export function useVerificacionTienda() {
   const { usuario, cargando: cargandoSesion } = useSesion();
   const esTienda = usuario?.rol === 'tienda';
@@ -43,8 +34,6 @@ export function useVerificacionTienda() {
 
     miVerificacion()
       .then(async (v) => {
-        // Las URLs firmadas se piden en paralelo; si fallan, se muestran nulls
-        // (la pantalla igual muestra el estado, solo sin la miniatura).
         const [urlFachada, urlInterior] = await Promise.all([
           urlFotoVerificacion(v?.foto_fachada ?? null),
           urlFotoVerificacion(v?.foto_interior ?? null),

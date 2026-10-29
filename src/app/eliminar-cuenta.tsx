@@ -14,24 +14,10 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { useSesion } from '@/hooks/useSesion';
 import { colors, radius, spacing } from '@/theme';
 
-/** Palabra que hay que escribir para habilitar el borrado. */
 const CONFIRMACION = 'ELIMINAR';
 
 type Estado = 'inicio' | 'enviando' | 'listo' | 'error';
 
-/**
- * ============================================================================
- *  ELIMINAR MI CUENTA
- *
- *  Requisito de Google Play: vía DENTRO de la app para pedir el borrado de la
- *  cuenta y sus datos (la web es `/legal/eliminar-cuenta`).
- *
- *  La app no puede borrar `auth.users` por su cuenta (eso pide la clave
- *  `service_role`, que nunca viaja al cliente). Acá se REGISTRA la solicitud y
- *  se borran de inmediato los datos personales que no rompen nada; el cierre
- *  definitivo lo hace la administración (ver 20_eliminar_cuenta.sql).
- * ============================================================================
- */
 export default function PantallaEliminarCuenta() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -54,7 +40,6 @@ export default function PantallaEliminarCuenta() {
     try {
       await solicitarEliminacionCuenta(motivo.trim() || null);
       setEstado('listo');
-      // Cerramos la sesión: la cuenta ya no debe usarse.
       await supabase?.auth.signOut();
     } catch (e: unknown) {
       setError(leerError(e));

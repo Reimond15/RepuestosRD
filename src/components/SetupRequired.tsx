@@ -5,17 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, fontSize, radius, spacing } from '@/theme';
 
-/**
- * ============================================================================
- *  Pantalla de guarda.
- *  Se muestra cuando falta el archivo `.env`.
- *
- *  ¿Por qué existe? Porque `@supabase/supabase-js` LANZA una excepción si
- *  la URL no es válida, y eso produce una pantalla blanca sin explicación.
- *  Con esta pantalla el problema se ve claro y te dice qué hacer.
- * ============================================================================
- */
-
 const PASOS = [
   {
     n: 1,

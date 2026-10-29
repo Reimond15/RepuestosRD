@@ -6,7 +6,6 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { colors, radius, spacing } from '@/theme';
 import type { MotivoReporte } from '@/types/database';
 
-/** Motivos de reporte, en el orden en que se muestran. */
 export const MOTIVOS_REPORTE: { valor: MotivoReporte; etiqueta: string }[] = [
   { valor: 'estafa', etiqueta: 'Estafa o fraude' },
   { valor: 'producto_prohibido', etiqueta: 'Producto prohibido o ilegal' },
@@ -19,21 +18,11 @@ export const MOTIVOS_REPORTE: { valor: MotivoReporte; etiqueta: string }[] = [
 type Props = {
   visible: boolean;
   onDismiss: () => void;
-  /** Envía el reporte. La pantalla lo arma con el contexto (producto, pedido…). */
   onEnviar: (motivo: MotivoReporte, detalle: string) => Promise<void>;
   titulo?: string;
   descripcion?: string;
 };
 
-/**
- * ============================================================================
- *  Reportar contenido o usuario.
- *
- *  Google Play (política de contenido de usuarios) exige que la app tenga un
- *  sistema DENTRO de la app para reportar. Este es el formulario compartido:
- *  lo usa el detalle de un producto y el chat del pedido.
- * ============================================================================
- */
 export function ReportarModal({
   visible,
   onDismiss,

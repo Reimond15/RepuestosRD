@@ -28,7 +28,6 @@ export default function PantallaBuscar() {
 
   const catalogo = useBusqueda();
 
-  // sin Supabase se buscan los mocks, con la misma forma de datos
   const fuente = catalogo.enVivo || catalogo.cargando ? catalogo.datos : MOCK_CATALOGO;
 
   const resultados = useMemo(() => {
@@ -36,7 +35,6 @@ export default function PantallaBuscar() {
     const activas = new Set<CategoriaSlug>(seleccion);
 
     return fuente.filter((p) => {
-      // varias categorías marcadas = todo lo que pertenezca a cualquiera
       if (activas.size > 0 && !activas.has(p.categoria_slug)) return false;
       if (!t) return true;
       return textoBuscable(p).includes(t);
@@ -128,11 +126,6 @@ export default function PantallaBuscar() {
   );
 }
 
-/**
- * `catalogo_productos` llama `categoria` a la categoría; las vistas de
- * ranking la llaman `categoria_nombre`. Se normaliza una sola vez acá para
- * que ProductCard no tenga que conocer los dos nombres.
- */
 function aResumen(p: ProductoCatalogo) {
   return {
     producto_id: p.producto_id,
@@ -166,7 +159,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     height: 48,
-    // en escritorio no crece a 4000px de ancho
     maxWidth: 520,
   },
   buscadorInput: { color: colors.text, fontSize: fontSize.md },

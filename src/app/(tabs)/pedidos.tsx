@@ -39,8 +39,6 @@ export default function PantallaPedidos() {
   const { esMovil } = useResponsive();
   const { usuario, tienda, cargando: cargandoSesion } = useSesion();
 
-  // Si el usuario es una tienda, esta pestaña es su panel de pedidos;
-  // si es comprador, es su historial de compras.
   const esTienda = usuario?.rol === 'tienda';
 
   const {
@@ -59,15 +57,11 @@ export default function PantallaPedidos() {
     reintentar: reintentarTienda,
   } = usePedidosTienda(esTienda ? tienda?.id ?? null : null);
 
-  // Estado de la suscripción: solo para la tienda (el RPC filtra por rol).
   const { suscripcion } = useSuscripcion(esTienda && Boolean(tienda));
 
   const [accionando, setAccionando] = useState<string | null>(null);
   const [aviso, setAviso] = useState<{ tipo: 'error' | 'ok'; texto: string } | null>(null);
 
-  // Mensajes sin leer por pedido, para el globito del botón de chat.
-  // Sirve igual para el comprador y para la tienda (la RPC filtra por rol).
-  // Se refresca cada vez que la pestaña vuelve al frente.
   const [sinLeer, setSinLeer] = useState<Record<string, number>>({});
 
   const nombreTienda = (id: string) => tiendas.find((t) => t.id === id)?.nombre ?? 'Tienda';
@@ -84,7 +78,6 @@ export default function PantallaPedidos() {
           setSinLeer(Object.fromEntries(filas.map((f) => [f.pedido_id, Number(f.sin_leer)])));
         })
         .catch(() => {
-          // el globito es un extra: si falla, el chat sigue andando
         });
 
       return () => {
@@ -249,7 +242,6 @@ export default function PantallaPedidos() {
   );
 }
 
-/** Tarjeta del comprador: solo lectura, con la barra de progreso y la calificación. */
 function TarjetaPedidoCliente({
   pedido,
   tienda,
@@ -261,14 +253,8 @@ function TarjetaPedidoCliente({
 }: {
   pedido: PedidoConDetalle;
   tienda: string;
-  /** ids de producto de ESTE pedido que el cliente ya calificó */
   calificados: Set<string>;
-  /** mensajes del chat que el cliente todavía no leyó */
   sinLeer: number;
-  /**
-   * Dirección exacta de la tienda para retirar. Viene null mientras la tienda
-   * no confirme el pedido: hasta entonces solo se conoce la zona aproximada.
-   */
   retiro: UbicacionRetiro | null;
   onCalificar: () => void;
   onChatear: () => void;
@@ -389,7 +375,6 @@ function TarjetaPedidoCliente({
   );
 }
 
-/** Tarjeta de la tienda: los datos del pedido y los botones de estado. */
 function TarjetaPedidoTienda({
   pedido,
   cambiando,
@@ -399,7 +384,6 @@ function TarjetaPedidoTienda({
 }: {
   pedido: PedidoTiendaConDetalle;
   cambiando: boolean;
-  /** mensajes del chat que la tienda todavía no leyó */
   sinLeer: number;
   onEstado: (estado: EstadoPedido) => void;
   onChatear: () => void;
@@ -511,7 +495,6 @@ function TarjetaPedidoTienda({
   );
 }
 
-/** Botón para abrir el chat del pedido, con globito si hay mensajes sin leer. */
 function BotonChat({
   onPress,
   sinLeer,
@@ -557,10 +540,6 @@ function ChipEstado({ estado }: { estado: EstadoPedido }) {
   );
 }
 
-/**
- * Los 4 estados que ve el cliente. Nota: la base guarda `preparando` y
- * `enviado` por separado, pero el usuario ve "En camino" para los dos.
- */
 export function BarraProgresoPedido({ estado }: { estado: EstadoPedido }) {
   if (estado === 'cancelado') return null;
 

@@ -34,33 +34,16 @@ import type {
   VerificacionTienda,
 } from '@/types/database';
 
-/**
- * ============================================================================
- *  Consultas del catálogo público
- *
- *  El catálogo se puede ver SIN sesión, así que estas consultas usan el
- *  mismo cliente que el resto de la app. Si el proyecto no está
- *  configurado, cada función devuelve una lista vacía y los hooks caen
- *  a los datos de prueba — la pantalla nunca se ve rota.
- * ============================================================================
- */
-
-/** Cliente o null, para no repetir el chequeo en cada función. */
 const db: SupabaseClient | null = supabase;
 
 export const catalogoDisponible = isConfigured;
 
-/** Convierte el error de Postgres en algo que se pueda mostrar al usuario. */
 export function leerError(error: unknown): string {
   if (!error) return 'Error desconocido.';
   if (typeof error === 'string') return error;
   if (typeof error === 'object' && 'message' in error) return String(error.message);
   return 'Error desconocido.';
 }
-
-// ============================================================================
-//  productos_mas_vendidos
-// ============================================================================
 
 export async function buscarMasVendidos(
   nombres: string[] | null,
@@ -70,7 +53,6 @@ export async function buscarMasVendidos(
 
   let consulta = db.from('productos_mas_vendidos').select('*').limit(limite);
 
-  // la vista ya viene ordenada de mayor a menor
   if (nombres && nombres.length > 0) consulta = consulta.in('categoria_nombre', nombres);
 
   const { data, error } = await consulta;
@@ -78,11 +60,6 @@ export async function buscarMasVendidos(
 
   return (data ?? []) as ProductoMasVendido[];
 }
-
-// ============================================================================
-//  productos_mejor_calificados
-//  La vista ya exige mínimo 3 calificaciones, no hace falta filtrar acá.
-// ============================================================================
 
 export async function buscarMejorCalificados(
   nombres: string[] | null,
@@ -100,10 +77,6 @@ export async function buscarMejorCalificados(
   return (data ?? []) as ProductoMejorCalificado[];
 }
 
-// ============================================================================
-//  categorias
-// ============================================================================
-
 export async function buscarCategorias(): Promise<Categoria[]> {
   if (!db) return [];
 
@@ -113,19 +86,6 @@ export async function buscarCategorias(): Promise<Categoria[]> {
   return (data ?? []) as Categoria[];
 }
 
-// ============================================================================
-//  tiendas
-//
-//  OJO: la tabla `tiendas` NO se puede consultar directo desde la app. Está
-//  cerrada para `anon` (sin GRANT SELECT, a propósito) y una consulta devuelve
-//  "permission denied for table tiendas". Lo público se lee por vistas y
-//  funciones, igual que `catalogo_productos`.
-//
-//  Por eso el conteo va por la RPC `contar_tiendas_publicas()` (SQL 31), que
-//  devuelve solo un número: no expone ningún dato de las tiendas.
-// ============================================================================
-
-/** Cantidad de tiendas aprobadas (las que se ven en el catálogo). */
 export async function contarTiendas(): Promise<number> {
   if (!db) return 0;
 
@@ -134,15 +94,6 @@ export async function contarTiendas(): Promise<number> {
 
   return typeof data === 'number' ? data : 0;
 }
-
-// ============================================================================
-//  catalogo_productos  (búsqueda)
-//
-//  No filtra por texto: eso lo hace Postgres con el índice trigram de
-//  `nombre`. Buscando el nombre del producto el plan es mejor y el
-//  resultado trae también las marcas y modelos compatibles, que es lo
-//  que hace útil este buscador para repuestos.
-// ============================================================================
 
 export async function buscarProductos(limite = 60): Promise<ProductoCatalogo[]> {
   if (!db) return [];
@@ -154,7 +105,6 @@ export async function buscarProductos(limite = 60): Promise<ProductoCatalogo[]> 
   return (data ?? []) as ProductoCatalogo[];
 }
 
-/** Un producto del catálogo por id, para la pantalla de detalle. */
 export async function buscarProductoPorId(id: string): Promise<ProductoCatalogo | null> {
   if (!db) return null;
 
@@ -168,7 +118,6 @@ export async function buscarProductoPorId(id: string): Promise<ProductoCatalogo 
   return (data ?? null) as ProductoCatalogo | null;
 }
 
-/** Las tiendas de un carrito, para saber quién ofrece delivery y a qué costo. */
 export async function buscarTiendasPorIds(ids: string[]): Promise<Tienda[]> {
   if (!db || ids.length === 0) return [];
 
@@ -178,11 +127,6 @@ export async function buscarTiendasPorIds(ids: string[]): Promise<Tienda[]> {
   return (data ?? []) as Tienda[];
 }
 
-/**
- * Ubicación exacta de la tienda para los pedidos de RETIRO del comprador ya
- * confirmados. La RPC `ubicaciones_de_mis_pedidos` filtra por `auth.uid()` y
- * por estado, así que antes de confirmar no devuelve nada (anti-elusión).
- */
 export async function buscarUbicacionesRetiro(): Promise<UbicacionRetiro[]> {
   if (!db) return [];
 
@@ -192,11 +136,6 @@ export async function buscarUbicacionesRetiro(): Promise<UbicacionRetiro[]> {
   return (data ?? []) as UbicacionRetiro[];
 }
 
-/**
- * Precio y stock ACTUALES de los productos del carrito.
- * Se usa en el checkout: un precio puede haber cambiado después de
- * agregar al carrito, y el stock puede haber bajado.
- */
 export async function preciosYStock(
   ids: string[],
 ): Promise<{ producto_id: string; precio: number; stock: number }[]> {
@@ -211,14 +150,6 @@ export async function preciosYStock(
     stock: p.stock,
   }));
 }
-
-// ============================================================================
-//  Pedidos (cliente)
-//
-//  Un pedido es de UNA sola tienda; el carrito se parte en uno por tienda.
-//  Los triggers se encargan del total, del precio y del stock: acá solo se
-//  crea el pedido y sus líneas.
-// ============================================================================
 
 export async function crearPedidoYLineas(entrada: {
   clienteId: string;
@@ -261,11 +192,6 @@ export async function crearPedidoYLineas(entrada: {
   return pedidoId;
 }
 
-/**
- * Completa una lista de pedidos con sus líneas (con nombre e imagen del
- * producto). Genérico para reusarlo tanto con los pedidos del cliente como
- * con los de la tienda (que además traen el contacto del cliente).
- */
 async function conLineas<T extends Pedido>(
   filas: T[],
 ): Promise<(T & { lineas: LineaPedidoConNombre[] })[]> {
@@ -309,7 +235,6 @@ async function conLineas<T extends Pedido>(
   }));
 }
 
-/** Los pedidos del cliente con sus líneas (con nombre e imagen del producto). */
 export async function buscarPedidosCliente(clienteId: string): Promise<PedidoConDetalle[]> {
   if (!db) return [];
 
@@ -323,7 +248,6 @@ export async function buscarPedidosCliente(clienteId: string): Promise<PedidoCon
   return conLineas((data ?? []) as Pedido[]);
 }
 
-/** Un pedido del cliente por id, con sus líneas (para la pantalla de calificar). */
 export async function buscarPedidoPorId(pedidoId: string): Promise<PedidoConDetalle | null> {
   if (!db) return null;
 
@@ -340,20 +264,6 @@ export async function buscarPedidoPorId(pedidoId: string): Promise<PedidoConDeta
   return conDetalle ?? null;
 }
 
-// ============================================================================
-//  Pedidos (tienda / colaboradores)
-//
-//  El panel de la tienda usa el RPC `pedidos_de_mi_tienda()` (11_panel_tienda.sql)
-//  porque la RLS de `usuarios` no deja leer el perfil del comprador con un
-//  select normal. Las líneas sí se leen con RLS (detalle_select_involved).
-// ============================================================================
-
-/**
- * Los pedidos de la tienda del usuario.
- *
- * A propósito NO trae el contacto del cliente (la charla va por el chat) y la
- * dirección llega null hasta que el pedido se confirma (17_mensajes.sql).
- */
 export async function buscarPedidosTienda(): Promise<PedidoTiendaConDetalle[]> {
   if (!db) return [];
 
@@ -363,7 +273,6 @@ export async function buscarPedidosTienda(): Promise<PedidoTiendaConDetalle[]> {
   return conLineas((data ?? []) as PedidoTienda[]);
 }
 
-/** Cambia el estado de un pedido. La RLS solo deja hacerlo a su dueño. */
 export async function actualizarEstadoPedido(
   pedidoId: string,
   estado: EstadoPedido,
@@ -374,10 +283,6 @@ export async function actualizarEstadoPedido(
   if (error) throw error;
 }
 
-/**
- * Aplana la compatibilidad (que viene como jsonb agregado) a una lista de
- * texto: "Honda XR150 2015-2023". Es lo que se muestra en la tarjeta.
- */
 export function compatibilidadATexto(compatibilidad: ProductoCatalogo['compatibilidad']): string[] {
   if (!Array.isArray(compatibilidad)) return [];
 
@@ -394,14 +299,6 @@ export function compatibilidadATexto(compatibilidad: ProductoCatalogo['compatibi
     return desde && hasta ? `${nombre} ${desde}-${hasta}`.trim() : nombre;
   }).filter(Boolean);
 }
-
-// ============================================================================
-//  Tipos de repuesto (pantalla de administración)
-//
-//  Lectura pública (`tipos_select_public`); escritura solo admin
-//  (`tipos_write_admin`). Si no sos admin, la base rechaza el insert/update/
-//  delete y el error se muestra tal cual.
-// ============================================================================
 
 export async function buscarTipos(): Promise<TipoConCategoria[]> {
   if (!db) return [];
@@ -460,14 +357,6 @@ export async function eliminarTipo(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// ============================================================================
-//  Tiendas (panel de administración)
-//
-//  Solo el admin puede leer y escribir: la RLS y las RPC `security definer`
-//  (`admin_*`) validan `es_admin()`. Si un no-admin llama, la base rechaza.
-// ============================================================================
-
-/** Todas las tiendas con su dueño y el estado de la suscripción. Solo admin. */
 export async function listarTiendasAdmin(): Promise<TiendaAdmin[]> {
   if (!db) return [];
 
@@ -477,7 +366,6 @@ export async function listarTiendasAdmin(): Promise<TiendaAdmin[]> {
   return (data ?? []) as TiendaAdmin[];
 }
 
-/** Aprueba (true) o rechaza (false) una tienda. Solo admin. */
 export async function aprobarTienda(tiendaId: string, aprobar: boolean): Promise<void> {
   if (!db) throw new Error('Supabase no está configurado.');
 
@@ -489,7 +377,6 @@ export async function aprobarTienda(tiendaId: string, aprobar: boolean): Promise
   if (error) throw error;
 }
 
-/** Marca/desmarca una tienda como fundadora (RD$100/mes, tope 25). Solo admin. */
 export async function marcarFundadora(tiendaId: string, marcar: boolean): Promise<void> {
   if (!db) throw new Error('Supabase no está configurado.');
 
@@ -501,19 +388,6 @@ export async function marcarFundadora(tiendaId: string, marcar: boolean): Promis
   if (error) throw error;
 }
 
-// ============================================================================
-//  Verificación de tiendas (fotos de fachada + interior)
-//
-//  Las fotos viven en el bucket PRIVADO `verificacion`. Acá se sube el archivo,
-//  se devuelve la RUTA (no una URL pública) y se ve por URL firmada temporal.
-//  La insignia pública (`tiendas.verificada`) la sincroniza un trigger en la base.
-// ============================================================================
-
-/**
- * Sube una foto de verificación al bucket privado, dentro de la carpeta del
- * dueño: `verificacion/<dueno_id>/<archivo>`. Esa es la ruta que exige la
- * política de Storage. Devuelve la RUTA guardada (para firmarla después).
- */
 export async function subirFotoVerificacion(
   duenoId: string,
   archivo: { uri: string; mimeType?: string | null },
@@ -537,10 +411,6 @@ export async function subirFotoVerificacion(
   return ruta;
 }
 
-/**
- * URL firmada temporal de una foto privada de verificación.
- * Devuelve null si la ruta viene vacía. Sirve para el dueño y para el admin.
- */
 export async function urlFotoVerificacion(
   ruta: string | null,
   segundos = 3600,
@@ -555,7 +425,6 @@ export async function urlFotoVerificacion(
   return data?.signedUrl ?? null;
 }
 
-/** La tienda manda sus 2 fotos (fachada + interior) a revisión. */
 export async function enviarVerificacion(
   fachada: string,
   interior: string,
@@ -570,7 +439,6 @@ export async function enviarVerificacion(
   if (error) throw error;
 }
 
-/** Estado y fotos de la verificación de la tienda del usuario actual. */
 export async function miVerificacion(): Promise<VerificacionTienda | null> {
   if (!db) return null;
 
@@ -581,7 +449,6 @@ export async function miVerificacion(): Promise<VerificacionTienda | null> {
   return filas[0] ?? null;
 }
 
-/** Verificaciones de todas las tiendas (con las rutas de las fotos). Solo admin. */
 export async function listarVerificaciones(): Promise<VerificacionAdmin[]> {
   if (!db) return [];
 
@@ -591,7 +458,6 @@ export async function listarVerificaciones(): Promise<VerificacionAdmin[]> {
   return (data ?? []) as VerificacionAdmin[];
 }
 
-/** Aprueba (true) o rechaza (false) la verificación de una tienda. Solo admin. */
 export async function verificarTienda(
   tiendaId: string,
   aprobar: boolean,
@@ -608,15 +474,6 @@ export async function verificarTienda(
   if (error) throw error;
 }
 
-// ============================================================================
-//  Calificaciones / reseñas
-//
-//  Lectura pública (`resenas_producto`, sin datos del cliente).
-//  Escritura solo del propio comprador y solo sobre un pedido "entregado":
-//  lo valida el trigger `validar_calificacion`, acá solo se inserta.
-// ============================================================================
-
-/** Las reseñas de un producto, de la más nueva a la más vieja. */
 export async function buscarResenasProducto(productoId: string): Promise<ResenaProducto[]> {
   if (!db) return [];
 
@@ -630,7 +487,6 @@ export async function buscarResenasProducto(productoId: string): Promise<ResenaP
   return (data ?? []) as ResenaProducto[];
 }
 
-/** Las calificaciones que un pedido ya tiene (para no calificar dos veces). */
 export async function buscarCalificacionesDePedido(pedidoId: string): Promise<Calificacion[]> {
   if (!db) return [];
 
@@ -643,10 +499,6 @@ export async function buscarCalificacionesDePedido(pedidoId: string): Promise<Ca
   return (data ?? []) as Calificacion[];
 }
 
-/**
- * Todas las calificaciones de un cliente. Se usa en "Mis pedidos" para saber
- * qué pedidos ya están calificados sin una consulta por cada tarjeta.
- */
 export async function buscarCalificacionesCliente(clienteId: string): Promise<Calificacion[]> {
   if (!db) return [];
 
@@ -659,7 +511,6 @@ export async function buscarCalificacionesCliente(clienteId: string): Promise<Ca
   return (data ?? []) as Calificacion[];
 }
 
-/** Deja una reseña (1 a 5 estrellas) de un producto de un pedido entregado. */
 export async function crearCalificacion(entrada: {
   pedidoId: string;
   productoId: string;
@@ -680,15 +531,6 @@ export async function crearCalificacion(entrada: {
   if (error) throw error;
 }
 
-// ============================================================================
-//  Panel de la tienda — productos
-//
-//  La RLS deja a la tienda crear/editar/borrar los productos de SU tienda
-//  (y solo si la tienda está aprobada — lo valida el trigger
-//  `validar_producto_tienda`). Acá solo se arman las consultas.
-// ============================================================================
-
-/** Todos los repuestos de una tienda, activos e inactivos (panel de la tienda). */
 export async function buscarProductosDeTienda(tiendaId: string): Promise<Producto[]> {
   if (!db) return [];
 
@@ -702,7 +544,6 @@ export async function buscarProductosDeTienda(tiendaId: string): Promise<Product
   return (data ?? []) as Producto[];
 }
 
-/** Un producto por id, sin pasar por el catálogo (incluye los inactivos). */
 export async function buscarProductoBase(id: string): Promise<Producto | null> {
   if (!db) return null;
 
@@ -712,7 +553,6 @@ export async function buscarProductoBase(id: string): Promise<Producto | null> {
   return (data ?? null) as Producto | null;
 }
 
-/** Lo que la tienda puede mandar al crear/editar un repuesto. */
 export type ProductoEntrada = {
   categoria_id: string;
   tipo_id: string;
@@ -758,16 +598,6 @@ export async function eliminarProducto(id: string): Promise<void> {
   if (error) throw error;
 }
 
-/**
- * Sube una foto del teléfono al bucket `productos`, dentro de la carpeta del
- * producto: `productos/<producto_id>/<archivo>`. Esa es la ruta que exige la
- * política de Storage (`06_storage.sql`): solo el dueño de la tienda del
- * producto puede escribir ahí.
- *
- * Lee el archivo local con `fetch` (funciona con las URIs `file://` / `content://`
- * que devuelve expo-image-picker) y lo manda como bytes. Devuelve la URL pública
- * para guardarla en `productos.imagenes`.
- */
 export async function subirImagenProducto(
   productoId: string,
   archivo: { uri: string; mimeType?: string | null },
@@ -792,10 +622,6 @@ export async function subirImagenProducto(
   return data.publicUrl;
 }
 
-// ============================================================================
-//  Panel de la tienda — compatibilidad
-// ============================================================================
-
 export type CompatibilidadEntrada = {
   marca: string;
   modelo: string;
@@ -803,7 +629,6 @@ export type CompatibilidadEntrada = {
   anio_hasta: number;
 };
 
-/** La compatibilidad cargada de un producto. */
 export async function buscarCompatibilidadDeProducto(
   productoId: string,
 ): Promise<Compatibilidad[]> {
@@ -819,10 +644,6 @@ export async function buscarCompatibilidadDeProducto(
   return (data ?? []) as Compatibilidad[];
 }
 
-/**
- * Reemplaza toda la compatibilidad de un producto (borra y vuelve a insertar).
- * Es lo más simple para un formulario: el usuario ve y edita la lista completa.
- */
 export async function reemplazarCompatibilidad(
   productoId: string,
   filas: CompatibilidadEntrada[],
@@ -844,16 +665,6 @@ export async function reemplazarCompatibilidad(
   if (error) throw error;
 }
 
-// ============================================================================
-//  Chat interno del pedido (anti-elusión)
-//
-//  Comprador y tienda se escriben acá adentro, sin intercambiar teléfono ni
-//  correo. La RLS (17_mensajes.sql) deja ver y escribir solo a los dos
-//  participantes del pedido; `leido` se marca con una RPC porque no hay
-//  policy de update.
-// ============================================================================
-
-/** Los mensajes de un pedido, del más viejo al más nuevo. */
 export async function buscarMensajes(pedidoId: string): Promise<Mensaje[]> {
   if (!db) return [];
 
@@ -867,7 +678,6 @@ export async function buscarMensajes(pedidoId: string): Promise<Mensaje[]> {
   return (data ?? []) as Mensaje[];
 }
 
-/** Manda un mensaje al chat de un pedido. Devuelve la fila guardada. */
 export async function enviarMensaje(entrada: {
   pedidoId: string;
   autorId: string;
@@ -889,7 +699,6 @@ export async function enviarMensaje(entrada: {
   return data as Mensaje;
 }
 
-/** Marca como leídos los mensajes que mandó la contraparte en un pedido. */
 export async function marcarMensajesLeidos(pedidoId: string): Promise<void> {
   if (!db) return;
 
@@ -897,7 +706,6 @@ export async function marcarMensajesLeidos(pedidoId: string): Promise<void> {
   if (error) throw error;
 }
 
-/** Cuántos mensajes sin leer tiene cada pedido (para el globito del panel). */
 export async function buscarMensajesSinLeer(): Promise<SinLeerPedido[]> {
   if (!db) return [];
 
@@ -907,16 +715,6 @@ export async function buscarMensajesSinLeer(): Promise<SinLeerPedido[]> {
   return (data ?? []) as SinLeerPedido[];
 }
 
-// ============================================================================
-//  Suscripción de la tienda
-//  RD$100/mes precio de fundador (primeras 25 tiendas, 12 meses desde la marca)
-//  o RD$500/mes. 30 días gratis · 5 días de gracia (19_catalogo_y_suscripcion.sql, 22_precio_fundador.sql)
-// ============================================================================
-
-/**
- * Estado de la suscripción de la tienda del usuario (o de cualquier tienda si
- * el usuario es admin). Devuelve null si el usuario no tiene tienda.
- */
 export async function buscarMiSuscripcion(): Promise<MiSuscripcion | null> {
   if (!db) return null;
 
@@ -927,13 +725,6 @@ export async function buscarMiSuscripcion(): Promise<MiSuscripcion | null> {
   return filas[0] ?? null;
 }
 
-// ============================================================================
-//  Eliminación de cuenta
-//  Requisito de Google Play (20_eliminar_cuenta.sql).
-//  La app registra la solicitud; el admin cierra el borrado definitivo.
-// ============================================================================
-
-/** Última solicitud de eliminación del usuario que todavía no se completó. */
 export async function buscarMiSolicitudEliminacion(): Promise<SolicitudEliminacion | null> {
   if (!db) return null;
 
@@ -949,11 +740,6 @@ export async function buscarMiSolicitudEliminacion(): Promise<SolicitudEliminaci
   return (data as SolicitudEliminacion | null) ?? null;
 }
 
-/**
- * Registra el pedido de eliminación de la cuenta del usuario actual.
- * Devuelve el id de la solicitud. La RPC también borra de inmediato los datos
- * personales que no rompen nada (mensajes, calificaciones, teléfono).
- */
 export async function solicitarEliminacionCuenta(motivo: string | null): Promise<string> {
   if (!db) throw new Error('Supabase no está configurado.');
 
@@ -965,16 +751,6 @@ export async function solicitarEliminacionCuenta(motivo: string | null): Promise
   return String(data);
 }
 
-// ============================================================================
-//  Eliminación de cuenta (panel de administración)
-//
-//  Requisito de Google Play: la eliminación debe funcionar de verdad. El borrado
-//  de `auth.users` vive en la Edge Function `eliminar-cuenta` (necesita la clave
-//  `service_role`, que nunca viaja al cliente). Acá se listan las solicitudes y
-//  se llama a la función. Las RPC validan `es_admin()` en la base.
-// ============================================================================
-
-/** Solicitudes de eliminación con su contexto. Solo admin. */
 export async function listarEliminaciones(): Promise<EliminacionAdmin[]> {
   if (!db) return [];
 
@@ -984,14 +760,6 @@ export async function listarEliminaciones(): Promise<EliminacionAdmin[]> {
   return (data ?? []) as EliminacionAdmin[];
 }
 
-/**
- * Cierra una solicitud de eliminación: prepara los datos, borra la cuenta de
- * `auth.users` y marca la solicitud como completada.
- *
- * Llama a la Edge Function `eliminar-cuenta`, que corre en el servidor de
- * Supabase (ahí vive la `service_role`). La función valida que quien llama sea
- * admin antes de hacer nada.
- */
 export async function eliminarCuentaAdmin(entrada: {
   usuarioId: string;
   solicitudId?: string | null;
@@ -1006,13 +774,11 @@ export async function eliminarCuentaAdmin(entrada: {
   });
 
   if (error) {
-    // `FunctionsHttpError` trae el mensaje real del servidor en el cuerpo.
     let detalle = error.message;
     try {
       const cuerpo = await (error as { context?: Response }).context?.json();
       if (cuerpo?.error) detalle = String(cuerpo.error);
     } catch {
-      // sin cuerpo legible: nos quedamos con el mensaje genérico
     }
     throw new Error(detalle);
   }
@@ -1030,13 +796,6 @@ export async function eliminarCuentaAdmin(entrada: {
   };
 }
 
-// ============================================================================
-//  Reportes y bloqueos
-//  Requisito de Google Play (política de contenido de usuarios).
-//  Ver 21_reportes_y_bloqueos.sql.
-// ============================================================================
-
-/** La contraparte del pedido (el otro participante) para quien llama. */
 export async function buscarContraparteDelPedido(pedidoId: string): Promise<string | null> {
   if (!db) return null;
 
@@ -1048,7 +807,6 @@ export async function buscarContraparteDelPedido(pedidoId: string): Promise<stri
   return (data as string | null) ?? null;
 }
 
-/** Crea un reporte de contenido o de usuario. Lo resuelve el admin. */
 export async function crearReporte(entrada: {
   reportanteId: string;
   tipo: TipoReporte;
@@ -1079,7 +837,6 @@ export async function crearReporte(entrada: {
   if (error) throw error;
 }
 
-/** Bloquea a otro usuario: deja de ver sus mensajes en el chat. */
 export async function bloquearUsuario(bloqueadorId: string, bloqueadoId: string): Promise<void> {
   if (!db) throw new Error('Supabase no está configurado.');
 
@@ -1090,7 +847,6 @@ export async function bloquearUsuario(bloqueadorId: string, bloqueadoId: string)
   if (error) throw error;
 }
 
-/** Quita el bloqueo que el usuario le puso a otro. */
 export async function desbloquearUsuario(bloqueadorId: string, bloqueadoId: string): Promise<void> {
   if (!db) throw new Error('Supabase no está configurado.');
 
@@ -1103,7 +859,6 @@ export async function desbloquearUsuario(bloqueadorId: string, bloqueadoId: stri
   if (error) throw error;
 }
 
-/** Los usuarios que el usuario actual tiene bloqueados. */
 export async function buscarMisBloqueos(bloqueadorId: string): Promise<Bloqueo[]> {
   if (!db) return [];
 

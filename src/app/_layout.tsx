@@ -12,7 +12,6 @@ import { isConfigured } from '@/lib/supabase';
 import { colors, theme } from '@/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
-  // en web puede fallar y no pasa nada
 });
 
 export default function LayoutRaiz() {
@@ -27,10 +26,6 @@ export default function LayoutRaiz() {
           <StatusBar style="light" />
 
           <ErrorBoundary>
-            {/*
-              SIN claves de Supabase -> pantalla de guarda.
-              Se monta el tema igual, para que se vea el diseño.
-            */}
             {!isConfigured ? (
               <SetupRequired />
             ) : (

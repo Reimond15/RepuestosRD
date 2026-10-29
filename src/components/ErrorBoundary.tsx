@@ -5,21 +5,6 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { colors, radius, spacing } from '@/theme';
 
-/**
- * ============================================================================
- *  Barrera de errores.
- *
- *  ¿Por qué existe? Porque un error de render sin capturar CIERRA la app
- *  entera (Android vuelve al inicio del teléfono). Con esta barrera, si una
- *  pantalla falla, la app sigue viva y el usuario ve un mensaje con opción de
- *  reintentar en vez de un cierre inesperado.
- *
- *  Nota: las barreras de error solo atrapan errores de RENDER (no errores
- *  nativos ni de eventos asíncronos). Para esos se usa el try/catch del store
- *  de ubicación y las guardas defensivas de cada pantalla.
- * ============================================================================
- */
-
 type Props = {
   children: ReactNode;
 };
@@ -36,7 +21,6 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    // Deja rastro en la consola para poder diagnosticar en un build de prueba.
     console.error('ErrorBoundary atrapó un error:', error, info?.componentStack);
   }
 

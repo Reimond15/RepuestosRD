@@ -4,19 +4,12 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { colors } from '@/theme';
 
 type Props = {
-  /** Estrellas elegidas, de 0 (ninguna) a 5. */
   valor: number;
   onChange: (estrellas: number) => void;
-  /** Tamaño de cada estrella. */
   size?: number;
-  /** Deshabilita el toque (p. ej. cuando ya está calificado). */
   deshabilitado?: boolean;
 };
 
-/**
- * Estrellas tocables para dejar una calificación de 1 a 5.
- * Cada estrella es un objetivo táctil propio, con su etiqueta accesible.
- */
 export function SelectorEstrellas({
   valor,
   onChange,

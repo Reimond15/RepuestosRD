@@ -10,14 +10,6 @@ type Estado = {
   error: string | null;
 };
 
-/**
- * Solicitudes de eliminación de cuenta para el panel de administración
- * (RPC `admin_listar_eliminaciones`).
- *
- * Solo dispara la consulta si el usuario es admin: un usuario normal nunca la
- * pide, y la base igual la rechazaría. Mismo patrón que `useTiendasAdmin`
- * (setState solo dentro de la promesa, nunca sincrónico dentro del efecto).
- */
 export function useEliminacionesAdmin() {
   const { usuario, cargando: cargandoSesion } = useSesion();
   const esAdmin = usuario?.rol === 'admin';

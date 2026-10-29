@@ -23,7 +23,6 @@ export default function PantallaCarrito() {
   const cambiarCantidad = useCarrito((s) => s.cambiarCantidad);
   const quitar = useCarrito((s) => s.quitar);
 
-  // agrupar por tienda (un pedido = una tienda)
   const porTienda = useMemo(() => {
     const grupos = new Map<string, LineaCarrito[]>();
     for (const l of lineas) {

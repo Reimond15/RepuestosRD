@@ -5,31 +5,16 @@ import { buscarMensajes, enviarMensaje, leerError, marcarMensajesLeidos } from '
 import { supabase } from '@/lib/supabase';
 import type { Mensaje } from '@/types/database';
 
-/** El hilo cargado, atado al pedido al que pertenece. */
 type Hilo = {
-  /** pedidoId de los mensajes cargados (null = todavía no se cargó nada). */
   pedidoId: string | null;
   mensajes: Mensaje[];
   error: string | null;
 };
 
-/**
- * ============================================================================
- *  Chat de un pedido.
- *
- *  Carga el hilo, se suscribe a Realtime para ver los mensajes nuevos al
- *  instante y marca como leídos los de la contraparte al abrirlo.
- *
- *  Si Realtime no está disponible (o la base no lo tiene activado), el chat
- *  sigue funcionando con lo que se carga al abrir la pantalla.
- * ============================================================================
- */
 export function useMensajes(pedidoId: string | null, autorId: string | null) {
   const [hilo, setHilo] = useState<Hilo>({ pedidoId: null, mensajes: [], error: null });
   const [enviando, setEnviando] = useState(false);
 
-  // Un mensaje propio llega DOS veces: por el insert y por Realtime.
-  // Con este set nos aseguramos de mostrarlo una sola vez.
   const idsVistos = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -69,7 +54,6 @@ export function useMensajes(pedidoId: string | null, autorId: string | null) {
             idsVistos.current.add(nuevo.id);
             setHilo((prev) => ({ ...prev, mensajes: [...prev.mensajes, nuevo] }));
 
-            // si lo escribió la contraparte y estoy mirando, ya queda leído
             if (autorId && nuevo.autor_id !== autorId) {
               void marcarMensajesLeidos(pedidoId).catch(() => {});
             }
@@ -106,7 +90,6 @@ export function useMensajes(pedidoId: string | null, autorId: string | null) {
     [pedidoId, autorId],
   );
 
-  // Mientras el hilo cargado no sea el del pedido pedido, seguimos cargando.
   const cargando = pedidoId !== null && hilo.pedidoId !== pedidoId;
 
   return { mensajes: hilo.mensajes, cargando, error: hilo.error, enviando, enviar };

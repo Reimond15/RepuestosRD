@@ -13,7 +13,6 @@ export type LineaCarrito = {
   stock: number;
 };
 
-/** Precio y stock actualizados desde la base, para revalidar en el checkout. */
 export type PrecioStockActual = {
   producto_id: string;
   precio: number;
@@ -23,23 +22,16 @@ export type PrecioStockActual = {
 type EstadoCarrito = {
   lineas: LineaCarrito[];
 
-  /**
-   * Agrega (o suma) una línea. Devuelve `null` si salió bien, o un mensaje
-   * para mostrar si no (agotado). Con `stock = 0` NO agrega nada.
-   */
   agregar: (p: Omit<LineaCarrito, 'cantidad'>, cantidad?: number) => string | null;
   quitar: (productoId: string) => void;
   cambiarCantidad: (productoId: string, cantidad: number) => void;
   vaciar: () => void;
-  /** Limpia solo las líneas de una tienda (después de crear su pedido). */
   vaciarTienda: (tiendaId: string) => void;
-  /** Revalida el carrito contra la base (precios/stock que pueden haber cambiado). */
   revalidar: (actuales: PrecioStockActual[]) => void;
 
   total: () => number;
   cantidadTotal: () => number;
   hayArticulos: () => boolean;
-  /** Un pedido es de UNA sola tienda: el carrito se agrupa por tienda. */
   tiendasDistintas: () => string[];
 };
 
@@ -111,8 +103,6 @@ export const useCarrito = create<EstadoCarrito>()(
                 if (!actual) return l;
                 return { ...l, precio: actual.precio, stock: actual.stock };
               })
-              // se saca lo que ya no existe (desactivado, tienda sin aprobar)
-              // o lo que quedó sin stock
               .filter((l) => porId.has(l.producto_id) && l.stock > 0),
           };
         }),

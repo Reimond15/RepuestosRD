@@ -28,16 +28,11 @@ export default function PantallaInicio() {
   const mejorCalificados = useMejorCalificados(seleccion);
   const tiendas = useTiendasCount();
 
-  // ubicación del cliente: define la zona del título y el orden por cercanía
   const { estado: estadoUbicacion, lat, lng, zona, localizar } = useUbicacion();
   const ubicado = lat !== null && lng !== null;
   const tituloZona =
     zona ?? (estadoUbicacion === 'preguntando' ? 'Buscando tu zona…' : 'Tu zona');
 
-  /**
-   * El estado del aviso de arriba. Solo aparece cuando hay algo que
-   * decir: si todo salió bien, no ocupa espacio.
-   */
   const aviso = (() => {
     if (masVendidos.error || mejorCalificados.error) {
       return {
@@ -57,11 +52,9 @@ export default function PantallaInicio() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[
             styles.contenido,
-            // en escritorio el header ya da el alto, no hace falta el safe area
             { paddingTop: esMovil ? insets.top + spacing.md : 0 },
           ]}
         >
-          {/* ---------------- cabecera ---------------- */}
           <View style={styles.cabecera}>
             {esMovil ? <AppLogo tamano={30} conNombre={false} /> : null}
 
@@ -112,12 +105,10 @@ export default function PantallaInicio() {
             ) : null}
           </View>
 
-          {/* ---------------- filtro de categoría (checklist) ---------------- */}
           <View style={styles.filtros}>
             <ChecklistCategorias seleccion={seleccion} onChange={setSeleccion} />
           </View>
 
-          {/* ---------------- estado de los datos ---------------- */}
           {aviso ? (
             <AvisoDatos
               modo={aviso.modo}
@@ -126,7 +117,6 @@ export default function PantallaInicio() {
             />
           ) : null}
 
-          {/* ---------------- Lo más vendido ---------------- */}
           <SectionProductos
             titulo="Lo más vendido"
             subtitulo={
@@ -141,7 +131,6 @@ export default function PantallaInicio() {
             }
           />
 
-          {/* ---------------- Mejor calificados ---------------- */}
           <SectionProductos
             titulo="Mejor calificados"
             subtitulo="Mínimo 3 calificaciones"
@@ -159,12 +148,6 @@ export default function PantallaInicio() {
   );
 }
 
-/**
- * Contador de tiendas aprobadas, alineado a la derecha del subtítulo.
- *
- * Si la consulta falla no se dibuja nada: un "0 tiendas" sería mentira. Mientras
- * carga muestra un guion para reservar el espacio y que no salte el diseño.
- */
 function ContadorTiendas({
   cantidad,
   cargando,

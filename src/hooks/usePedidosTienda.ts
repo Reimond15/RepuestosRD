@@ -9,14 +9,6 @@ type Estado = {
   error: string | null;
 };
 
-/**
- * Pedidos que le llegaron a la tienda del usuario (panel de colaboradores).
- *
- * Mismo patrón que usePedidos: sin `tiendaId` no consulta (y queda
- * `cargando` en true, que la pantalla resuelve según la sesión); el
- * reintento re-dispara el efecto con un contador (se usa después de
- * cambiar un estado, para refrescar la lista).
- */
 export function usePedidosTienda(tiendaId: string | null) {
   const [estado, setEstado] = useState<Estado>({
     pedidos: [],

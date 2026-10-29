@@ -6,20 +6,12 @@ import { CATEGORIAS, type CategoriaSlug } from '@/lib/constants';
 import { colors, fontSize, radius, spacing } from '@/theme';
 
 type Props = {
-  /** Slugs marcados. Vacío = "Todos" (ver todo). */
   seleccion: CategoriaSlug[];
   onChange: (seleccion: CategoriaSlug[]) => void;
 };
 
 type Opcion = { clave: CategoriaSlug | 'todos'; etiqueta: string };
 
-/**
- * Checklist de categorías (multi-selección): "Todos" + las 3 categorías.
- *
- * El cliente marca varias a la vez —moto y carro, por ejemplo— y ve todo
- * lo relacionado sin volver a buscar. "Todos" limpia la selección.
- * Las opciones hacen wrap para que se vean bien en pantallas chicas.
- */
 export function ChecklistCategorias({ seleccion, onChange }: Props) {
   const opciones: Opcion[] = [
     { clave: 'todos', etiqueta: 'Todos' },

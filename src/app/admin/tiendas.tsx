@@ -23,18 +23,6 @@ import { fechaCorta } from '@/lib/format';
 import type { TiendaAdmin, VerificacionAdmin } from '@/types/database';
 import { colors, radius, spacing } from '@/theme';
 
-/**
- * ============================================================================
- *  Panel de administración · Tiendas
- *
- *  Requisito de Google Play y de operación: nadie se auto-aprueba. Esta
- *  pantalla deja al admin aprobar/rechazar tiendas y marcarlas como fundadoras
- *  (RD$100/mes, 12 meses, tope 25) SIN entrar al SQL Editor de Supabase.
- *
- *  Solo para el rol `admin`. Las RPC `admin_*` validan `es_admin()` en la base,
- *  así que un no-admin no puede hacer nada aunque llegue a esta pantalla.
- * ============================================================================
- */
 export default function PantallaAdminTiendas() {
   const insets = useSafeAreaInsets();
   const { esMovil } = useResponsive();
@@ -49,8 +37,6 @@ export default function PantallaAdminTiendas() {
     { tienda: TiendaAdmin; accion: 'rechazar' } | null
   >(null);
 
-  // Verificación con fotos: el estado se guarda por tienda y las URLs firmadas
-  // se piden solo al abrir el diálogo (expiran, no tiene sentido cachearlas).
   const [verificaciones, setVerificaciones] = useState<Record<string, VerificacionAdmin>>({});
   const [fotos, setFotos] = useState<{
     tienda: TiendaAdmin;
@@ -64,7 +50,6 @@ export default function PantallaAdminTiendas() {
   const aprobadas = useMemo(() => tiendas.filter((t) => t.aprobada), [tiendas]);
   const fundadoras = useMemo(() => tiendas.filter((t) => t.es_fundador), [tiendas]);
 
-  // Trae las verificaciones (incluye las rutas de las fotos) cuando cambia la lista.
   useEffect(() => {
     if (!esAdmin) return;
     let vigente = true;
@@ -76,12 +61,10 @@ export default function PantallaAdminTiendas() {
         setVerificaciones(mapa);
       })
       .catch(() => {
-        // Si falla, el panel sigue funcionando sin la parte de verificación.
       });
     return () => {
       vigente = false;
     };
-    // `tiendas` cambia cada vez que se recarga el panel; sirve de disparador.
   }, [esAdmin, tiendas]);
 
   const correr = async (id: string, accion: () => Promise<void>, ok: string) => {
@@ -129,7 +112,6 @@ export default function PantallaAdminTiendas() {
     );
   };
 
-  /** Abre el diálogo con las fotos (pidiendo URLs firmadas temporales). */
   const abrirFotos = async (t: TiendaAdmin) => {
     const v = verificaciones[t.tienda_id];
     setNotaRechazo('');
@@ -219,7 +201,6 @@ export default function PantallaAdminTiendas() {
             <EmptyState icono="alert-circle-outline" titulo="No pudimos cargar" mensaje={error} />
           ) : (
             <>
-              {/* ---------------- pendientes ---------------- */}
               <View style={styles.grupo}>
                 <Text style={styles.grupoTitulo} variant="titleSmall">
                   Pendientes de aprobación · {pendientes.length}
@@ -244,7 +225,6 @@ export default function PantallaAdminTiendas() {
                 )}
               </View>
 
-              {/* ---------------- aprobadas ---------------- */}
               <View style={styles.grupo}>
                 <Text style={styles.grupoTitulo} variant="titleSmall">
                   Aprobadas · {aprobadas.length}

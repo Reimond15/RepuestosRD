@@ -2,10 +2,6 @@ import { MD3DarkTheme, configureFonts, type MD3Theme } from 'react-native-paper'
 
 import { colors, fontSize, radius, shadow, spacing } from './colors';
 
-/**
- * Tema único de la app. React Native Paper + Expo Router leen de acá.
- * Si cambias `colors.ts`, esta archivo se adapta solo.
- */
 export const theme: MD3Theme = {
   ...MD3DarkTheme,
   roundness: 4,

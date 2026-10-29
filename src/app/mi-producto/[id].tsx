@@ -36,7 +36,6 @@ import {
 } from '@/lib/queries';
 import { colors, radius, spacing } from '@/theme';
 
-/** Fila de compatibilidad mientras se edita (los años son texto hasta guardar). */
 type FilaCompat = {
   marca: string;
   modelo: string;
@@ -46,12 +45,6 @@ type FilaCompat = {
 
 const filaVacia = (): FilaCompat => ({ marca: '', modelo: '', anio_desde: '', anio_hasta: '' });
 
-/**
- * Alta y edición de un repuesto de la tienda.
- *
- * `id === 'nuevo'` es alta. Al guardar, la compatibilidad se reemplaza entera
- * (borrar + insertar), que es lo más simple para editar una lista.
- */
 export default function PantallaMiProducto() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const esNuevo = id === 'nuevo';
@@ -61,7 +54,6 @@ export default function PantallaMiProducto() {
   const { usuario, tienda, cargando: cargandoSesion } = useSesion();
   const { categorias, tipos, cargando: cargandoTipos } = useTipos();
 
-  // --- estado del formulario ---
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [categoriaId, setCategoriaId] = useState('');
@@ -71,7 +63,6 @@ export default function PantallaMiProducto() {
   const [condicion, setCondicion] = useState<Condicion>('nuevo');
   const [activo, setActivo] = useState(true);
   const [imagenes, setImagenes] = useState<string[]>([]);
-  // fotos elegidas del teléfono, todavía sin subir (se suben al guardar)
   const [nuevas, setNuevas] = useState<{ uri: string; mimeType: string | null }[]>([]);
   const [compat, setCompat] = useState<FilaCompat[]>([]);
 
@@ -83,7 +74,6 @@ export default function PantallaMiProducto() {
 
   const esTienda = usuario?.rol === 'tienda';
 
-  // --- cargar el producto a editar ---
   useEffect(() => {
     if (esNuevo || !id) return;
 
@@ -133,7 +123,6 @@ export default function PantallaMiProducto() {
     setTipoId('');
   };
 
-  // --- compatibilidad ---
   const setFila = (indice: number, campo: keyof FilaCompat, valor: string) => {
     setCompat((filas) => filas.map((f, i) => (i === indice ? { ...f, [campo]: valor } : f)));
   };
@@ -141,7 +130,6 @@ export default function PantallaMiProducto() {
   const quitarCompat = (indice: number) =>
     setCompat((filas) => filas.filter((_, i) => i !== indice));
 
-  // --- imágenes ---
   const setImagen = (indice: number, valor: string) =>
     setImagenes((urls) => urls.map((u, i) => (i === indice ? valor : u)));
   const agregarImagen = () => setImagenes((urls) => [...urls, '']);
@@ -151,7 +139,6 @@ export default function PantallaMiProducto() {
   const quitarNueva = (indice: number) =>
     setNuevas((fotos) => fotos.filter((_, i) => i !== indice));
 
-  /** Abre la galería y agrega las fotos elegidas a la lista de "por subir". */
   const elegirFotos = async () => {
     setAviso(null);
     try {
@@ -180,7 +167,6 @@ export default function PantallaMiProducto() {
     }
   };
 
-  // --- validación ---
   const validar = (): string | null => {
     if (nombre.trim().length < 3) return 'El nombre tiene que tener al menos 3 caracteres.';
     if (!categoriaId) return 'Elegí una categoría.';
@@ -253,7 +239,6 @@ export default function PantallaMiProducto() {
         await actualizarProducto(id as string, entrada);
       }
 
-      // Subimos las fotos del teléfono al bucket y las sumamos a las URLs.
       if (nuevas.length > 0) {
         const subidas = await Promise.all(
           nuevas.map((foto) => subirImagenProducto(productoId as string, foto)),
@@ -338,7 +323,6 @@ export default function PantallaMiProducto() {
                 </View>
               ) : null}
 
-              {/* ---------------- datos básicos ---------------- */}
               <Seccion titulo="Datos del repuesto">
                 <TextInput
                   label="Nombre"
@@ -357,7 +341,6 @@ export default function PantallaMiProducto() {
                 />
               </Seccion>
 
-              {/* ---------------- categoría y tipo ---------------- */}
               <Seccion titulo="Vehículo">
                 <Text style={styles.etiqueta} variant="labelMedium">
                   Categoría
@@ -402,7 +385,6 @@ export default function PantallaMiProducto() {
                 )}
               </Seccion>
 
-              {/* ---------------- precio, stock, condición ---------------- */}
               <Seccion titulo="Precio y stock">
                 <View style={styles.dosColumnas}>
                   <TextInput
@@ -452,7 +434,6 @@ export default function PantallaMiProducto() {
                 </View>
               </Seccion>
 
-              {/* ---------------- imágenes ---------------- */}
               <Seccion titulo="Imágenes">
                 <Text style={styles.muted} variant="bodySmall">
                   Subí fotos desde el teléfono (hasta 5 por vez) o pegá el enlace de una imagen
@@ -536,7 +517,6 @@ export default function PantallaMiProducto() {
                 </Button>
               </Seccion>
 
-              {/* ---------------- compatibilidad ---------------- */}
               <Seccion titulo="Compatibilidad">
                 <Text style={styles.muted} variant="bodySmall">
                   Marcas y modelos con los que es compatible. Es lo que usa el buscador.
@@ -596,7 +576,6 @@ export default function PantallaMiProducto() {
                 </Button>
               </Seccion>
 
-              {/* ---------------- acciones ---------------- */}
               <View style={styles.acciones}>
                 <Button
                   mode="contained"
@@ -651,7 +630,6 @@ export default function PantallaMiProducto() {
   );
 }
 
-/** Tarjeta con un título, para agrupar campos. */
 function Seccion({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
     <View style={styles.seccion}>

@@ -14,23 +14,6 @@ import { fechaCorta } from '@/lib/format';
 import type { EliminacionAdmin } from '@/types/database';
 import { colors, radius, spacing } from '@/theme';
 
-/**
- * ============================================================================
- *  Panel de administración · Eliminaciones de cuenta
- *
- *  Requisito de Google Play: cuando un usuario pide borrar su cuenta, el
- *  borrado tiene que ocurrir DE VERDAD. Antes esto era un procedimiento de 5
- *  pasos a mano en el SQL Editor, fácil de olvidar (y de incumplir la política
- *  de privacidad publicada).
- *
- *  Acá el admin cierra una solicitud con UN toque. El borrado real corre en la
- *  Edge Function `eliminar-cuenta` de Supabase, porque borrar `auth.users` pide
- *  la clave `service_role`, que NUNCA puede viajar al celular.
- *
- *  Solo para el rol `admin`. Las RPC de la base validan `es_admin()` igual, así
- *  que un no-admin no puede hacer nada aunque llegue a esta pantalla.
- * ============================================================================
- */
 export default function PantallaAdminEliminaciones() {
   const insets = useSafeAreaInsets();
   const { esMovil } = useResponsive();
@@ -143,7 +126,6 @@ export default function PantallaAdminEliminaciones() {
             <EmptyState icono="alert-circle-outline" titulo="No pudimos cargar" mensaje={error} />
           ) : (
             <>
-              {/* ---------------- pendientes ---------------- */}
               <View style={styles.grupo}>
                 <Text style={styles.grupoTitulo} variant="titleSmall">
                   Pendientes · {pendientes.length}
@@ -164,7 +146,6 @@ export default function PantallaAdminEliminaciones() {
                 )}
               </View>
 
-              {/* ---------------- cerradas ---------------- */}
               {cerradas.length > 0 ? (
                 <View style={styles.grupo}>
                   <Text style={styles.grupoTitulo} variant="titleSmall">

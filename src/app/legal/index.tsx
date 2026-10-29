@@ -11,7 +11,6 @@ import { colors, spacing } from '@/theme';
 
 type NombreIcono = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
-/** Índice de los documentos legales. Podés verlo sin iniciar sesión. */
 export default function PantallaLegal() {
   const router = useRouter();
   const insets = useSafeAreaInsets();

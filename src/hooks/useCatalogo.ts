@@ -18,27 +18,10 @@ import type {
   ProductoMejorCalificado,
 } from '@/types/database';
 
-/**
- * ============================================================================
- *  Hooks del catálogo
- *
- *  Los cuatro tienen los mismos estados (cargando / error / datos) y la
- *  misma regla: si Supabase no está configurado se usan los datos de
- *  prueba, para que la pantalla nunca quede rota ni muestre un error que
- *  el usuario no puede arreglar.
- *
- *  `catalogoDisponible` es una constante de módulo: nunca cambia en
- *  caliente. Por eso el caso "sin Supabase" se resuelve en el render y no
- *  dentro del efecto — si no, la app haría un render extra para pasar de
- *  los mocks a los mocks.
- * ============================================================================
- */
-
 type Estado<T> = {
   datos: T[];
   cargando: boolean;
   error: string | null;
-  /** true cuando vino de Supabase, false cuando son datos de prueba */
   enVivo: boolean;
 };
 
@@ -49,9 +32,6 @@ const SIN_DATOS: Estado<never> = {
   enVivo: false,
 };
 
-/** Filtra las filas de ranking por la selección múltiple de slugs.
- *  Las vistas guardan el nombre con mayúscula ("Motocicletas"); el slug
- *  es ese mismo nombre en minúsculas, así que la comparación es directa. */
 function filtrarPorSeleccion<T extends { categoria_nombre: string }>(
   filas: T[],
   seleccion: CategoriaSlug[],
@@ -60,10 +40,6 @@ function filtrarPorSeleccion<T extends { categoria_nombre: string }>(
   const activas = new Set<CategoriaSlug>(seleccion);
   return filas.filter((f) => activas.has(f.categoria_nombre.toLowerCase() as CategoriaSlug));
 }
-
-// ============================================================================
-//  products_mas_vendidos
-// ============================================================================
 
 export function useMasVendidos(seleccion: CategoriaSlug[]) {
   const [estado, setEstado] = useState<Estado<ProductoMasVendido>>({
@@ -85,8 +61,6 @@ export function useMasVendidos(seleccion: CategoriaSlug[]) {
     buscarMasVendidos(nombresFiltro(seleccion))
       .then((filas) => {
         if (!vigente) return;
-        // Supabase respondió: se muestra el vacío real, no los mocks.
-        // Si no, una base sin datos parecería un error de la app.
         setEstado({ datos: filas, cargando: false, error: null, enVivo: true });
       })
       .catch((e: unknown) => {
@@ -104,7 +78,6 @@ export function useMasVendidos(seleccion: CategoriaSlug[]) {
     };
   }, [seleccion, intento]);
 
-  // las tiendas más cercanas primero (los mocks no tienen coordenadas, no cambia nada)
   const datos = useMemo(() => {
     const base = catalogoDisponible
       ? estado.datos
@@ -124,11 +97,6 @@ export function useMasVendidos(seleccion: CategoriaSlug[]) {
 
   return { ...estado, datos, reintentar };
 }
-
-// ============================================================================
-//  productos_mejor_calificados
-//  La vista en SQL ya exige mínimo 3 calificaciones.
-// ============================================================================
 
 export function useMejorCalificados(seleccion: CategoriaSlug[]) {
   const [estado, setEstado] = useState<Estado<ProductoMejorCalificado>>({
@@ -187,15 +155,6 @@ export function useMejorCalificados(seleccion: CategoriaSlug[]) {
   return { ...estado, datos, reintentar };
 }
 
-// ============================================================================
-//  Búsqueda
-//
-//  El texto se filtra en el dispositivo porque `catalogo_productos` son
-//  pocos cientos de filas: traerlas una vez es más rápido que una consulta
-//  por cada tecla. Cuando el catálogo crezca a miles, esto pasa a ser
-//  una consulta a Postgres con ilike sobre el índice trigram.
-// ============================================================================
-
 export function useBusqueda() {
   const [estado, setEstado] = useState<Estado<ProductoCatalogo>>({
     datos: [],
@@ -238,15 +197,6 @@ export function useBusqueda() {
   return { ...estado, datos, reintentar };
 }
 
-/**
- * ============================================================================
- *  Texto que se usa para buscar dentro de un producto.
- *
- *  Incluye la compatibilidad: si el usuario escribe "XR150" o "Toyota",
- *  encuentra el repuesto aunque el nombre del producto no lo diga. Para un
- *  marketplace de repuestos eso vale más que cualquier otra cosa.
- * ============================================================================
- */
 export function textoBuscable(p: ProductoCatalogo): string {
   return [
     p.nombre,
@@ -261,10 +211,6 @@ export function textoBuscable(p: ProductoCatalogo): string {
     .toLowerCase();
 }
 
-/**
- * Los mocks de "más vendidos" llevados a la forma de `catalogo_productos`,
- * para que la pantalla de buscar funcione sin Supabase con el mismo código.
- */
 export const MOCK_CATALOGO: ProductoCatalogo[] = MOCK_MAS_VENDIDOS.map((m) => ({
   producto_id: m.producto_id,
   nombre: m.producto,

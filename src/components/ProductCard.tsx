@@ -10,15 +10,6 @@ import { money, recortar } from '@/lib/format';
 import { distanciaTexto } from '@/lib/geo';
 import { CATEGORIAS } from '@/lib/constants';
 
-/**
- * Lo mínimo que la tarjeta necesita.
- *
- * Acepta las 3 formas que devuelven las vistas, para que la misma tarjeta
- * sirva en el inicio, en la búsqueda y en el detalle:
- *   - catalogo_productos        → nombre, precio
- *   - productos_mas_vendidos   → producto, precio_actual
- *   - productos_mejor_calificados → producto, precio_actual
- */
 export type ProductoResumen = {
   producto_id: string;
   tienda: string;
@@ -26,32 +17,24 @@ export type ProductoResumen = {
   total_calificaciones: number;
   categoria_nombre: string;
   imagenes?: string[] | null;
-  /** true si la tienda está verificada → muestra la insignia. */
   tienda_verificada?: boolean;
-  /** undefined = no se sabe (vistas de ranking sin stock) → no se marca agotado */
   stock?: number;
-  /** Distancia a la tienda, en km. Solo se muestra si la app tiene posición. */
   distancia_km?: number | null;
 
-  // el nombre del producto, con cualquiera de los dos alias
   nombre?: string;
   producto?: string;
 
-  // el precio, con cualquiera de los dos alias
   precio?: number | string;
   precio_actual?: number | string;
 };
 
 type Props = {
   producto: ProductoResumen;
-  /** "vertical" = tarjeta grande · "horizontal" = fila compacta */
   variante?: 'vertical' | 'horizontal';
-  /** Oculta el nombre de la tienda (en detalle no hace falta). */
   mostrarTienda?: boolean;
   onPress?: () => void;
 };
 
-/** Emoji que representa la categoría, usado de placeholder. */
 function emojiDeCategoria(nombre: string): string {
   return CATEGORIAS.find((c) => c.nombre === nombre)?.icono ?? '🔧';
 }
@@ -66,10 +49,8 @@ function ProductCardBase({
   const horizontal = variante === 'horizontal';
   const imagen = producto.imagenes?.find((u) => !!u);
   const sinImagen = !imagen || falloImagen;
-  // agotado solo cuando la vista trae stock y es 0; si es unknown no se marca
   const agotado = typeof producto.stock === 'number' && producto.stock <= 0;
 
-  // las vistas usan `producto`/`precio_actual`; el catálogo usa `nombre`/`precio`
   const nombre = producto.nombre ?? producto.producto ?? 'Producto';
   const precio = producto.precio ?? producto.precio_actual ?? 0;
 
@@ -82,7 +63,6 @@ function ProductCardBase({
         agotado && styles.agotado,
       ]}
     >
-      {/* ---------- imagen ---------- */}
       <View style={[styles.imagenBox, horizontal && styles.imagenBoxHorizontal]}>
         {sinImagen ? (
           <View style={styles.placeholder}>
@@ -106,7 +86,6 @@ function ProductCardBase({
         ) : null}
       </View>
 
-      {/* ---------- datos ---------- */}
       <View style={styles.datos}>
         <Text style={styles.nombre} numberOfLines={2} variant="titleSmall">
           {recortar(nombre, 42)}
@@ -187,7 +166,6 @@ const styles = StyleSheet.create({
   },
   cardHorizontal: { flexDirection: 'row' },
 
-  // ---- imagen ----
   imagenBox: { width: '100%', height: 140, backgroundColor: colors.surfaceAlt },
   imagenBoxHorizontal: { width: 108, height: 108 },
   imagen: { width: '100%', height: '100%' },
@@ -212,7 +190,6 @@ const styles = StyleSheet.create({
 
   agotado: { opacity: 0.6 },
 
-  // ---- datos ----
   datos: { padding: 10, gap: 5, flex: 1 },
   nombre: { color: colors.text, fontSize: fontSize.sm },
 

@@ -50,7 +50,6 @@ export default function PantallaCuenta() {
           Cuenta
         </Text>
 
-        {/* ---------------- perfil ---------------- */}
         <View style={styles.tarjeta}>
           {cargando ? (
             <Text style={styles.muted} variant="bodyMedium">
@@ -116,7 +115,6 @@ export default function PantallaCuenta() {
           ) : null}
         </View>
 
-        {/* ---------------- estado de la tienda ---------------- */}
         {usuario?.rol === 'tienda' && tienda ? (
           <View style={styles.banner}>
             <Text style={styles.bannerTitulo} variant="titleSmall">
@@ -142,7 +140,6 @@ export default function PantallaCuenta() {
           </View>
         ) : null}
 
-        {/* ---------------- panel de la tienda ---------------- */}
         {esTienda && tienda ? (
           <View style={styles.botonesTienda}>
             <Button
@@ -162,7 +159,6 @@ export default function PantallaCuenta() {
           </View>
         ) : null}
 
-        {/* ---------------- acceso rápido ---------------- */}
         <View style={styles.tarjeta}>
           <Fila icono="shopping-outline" texto="Carrito" valor={`${articulos} artículos`} />
           <Fila
@@ -186,7 +182,6 @@ export default function PantallaCuenta() {
           </Button>
         )}
 
-        {/* ---------------- legal ---------------- */}
         <View style={styles.tarjeta}>
           <Text style={styles.legalTitulo} variant="titleSmall">
             Legal
@@ -216,7 +211,6 @@ export default function PantallaCuenta() {
           ))}
         </View>
 
-        {/* ---------------- eliminar cuenta (requisito de Google Play) ---------------- */}
         {usuario ? (
           <Button
             mode="text"
@@ -229,7 +223,6 @@ export default function PantallaCuenta() {
           </Button>
         ) : null}
 
-        {/* ---------------- administración (solo admin) ---------------- */}
         {usuario?.rol === 'admin' ? (
           <View style={styles.adminContenedor}>
             <Button
@@ -256,7 +249,6 @@ export default function PantallaCuenta() {
           </View>
         ) : null}
 
-        {/* ---------------- placeholder etapas ---------------- */}
         {!usuario ? (
           <EmptyState
             icono="account-plus-outline"

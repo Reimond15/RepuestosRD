@@ -13,20 +13,11 @@ type Estado = {
   pedidos: PedidoConDetalle[];
   tiendas: Tienda[];
   calificaciones: Calificacion[];
-  /** Ubicación exacta de la tienda en los pedidos de retiro ya confirmados. */
   ubicaciones: UbicacionRetiro[];
   cargando: boolean;
   error: string | null;
 };
 
-/**
- * Pedidos del cliente con sus líneas, el nombre de cada tienda y las
- * calificaciones que ya dejó (para marcar los pedidos calificados).
- *
- * Mismo patrón que useCatalogo: sin usuario no consulta nada (y queda
- * `cargando` en true, pero la pantalla decide qué mostrar según la sesión);
- * el reintento re-dispara el efecto con un contador.
- */
 export function usePedidos(usuarioId: string | null) {
   const [estado, setEstado] = useState<Estado>({
     pedidos: [],
