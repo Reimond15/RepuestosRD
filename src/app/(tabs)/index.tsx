@@ -12,9 +12,11 @@ import { SectionProductos } from '@/components/SectionProductos';
 import { WebShell } from '@/components/WebShell';
 import { useMasVendidos, useMejorCalificados } from '@/hooks/useCatalogo';
 import { useResponsive } from '@/hooks/useResponsive';
+import { useTiendasCount } from '@/hooks/useTiendasCount';
+import { numero } from '@/lib/format';
 import type { CategoriaSlug } from '@/lib/constants';
 import { useUbicacion } from '@/store/ubicacion';
-import { colors, fontSize, spacing } from '@/theme';
+import { colors, fontSize, radius, spacing } from '@/theme';
 
 export default function PantallaInicio() {
   const insets = useSafeAreaInsets();
@@ -24,6 +26,7 @@ export default function PantallaInicio() {
 
   const masVendidos = useMasVendidos(seleccion);
   const mejorCalificados = useMejorCalificados(seleccion);
+  const tiendas = useTiendasCount();
 
   // ubicación del cliente: define la zona del título y el orden por cercanía
   const { estado: estadoUbicacion, lat, lng, zona, localizar } = useUbicacion();
@@ -88,9 +91,17 @@ export default function PantallaInicio() {
               />
             </Pressable>
 
-            <Text style={styles.subtitulo} variant="bodySmall">
-              Motocicletas · Carros · Guaguas
-            </Text>
+            <View style={styles.filaSubtitulo}>
+              <Text style={styles.subtitulo} variant="bodySmall">
+                Motocicletas · Carros · Guaguas
+              </Text>
+
+              <ContadorTiendas
+                cantidad={tiendas.cantidad}
+                cargando={tiendas.cargando}
+                esMovil={esMovil}
+              />
+            </View>
 
             {!ubicado ? (
               <Text style={styles.hintUbicacion} variant="bodySmall">
@@ -148,6 +159,48 @@ export default function PantallaInicio() {
   );
 }
 
+/**
+ * Contador de tiendas aprobadas, alineado a la derecha del subtítulo.
+ *
+ * Si la consulta falla no se dibuja nada: un "0 tiendas" sería mentira. Mientras
+ * carga muestra un guion para reservar el espacio y que no salte el diseño.
+ */
+function ContadorTiendas({
+  cantidad,
+  cargando,
+  esMovil,
+}: {
+  cantidad: number | null;
+  cargando: boolean;
+  esMovil: boolean;
+}) {
+  if (cantidad === null && !cargando) return null;
+
+  const texto =
+    cantidad === null
+      ? '— tiendas'
+      : `${numero(cantidad)} ${cantidad === 1 ? 'tienda' : 'tiendas'}`;
+
+  return (
+    <View
+      style={styles.contador}
+      accessible
+      accessibilityLabel={
+        cantidad === null ? 'Cargando tiendas registradas' : `${numero(cantidad)} tiendas registradas`
+      }
+    >
+      <MaterialCommunityIcons
+        name="store-outline"
+        size={esMovil ? 14 : 16}
+        color={colors.primaryLight}
+      />
+      <Text style={styles.contadorTexto} variant="labelSmall">
+        {texto}
+      </Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   pantalla: { flex: 1, backgroundColor: colors.background },
   contenido: { paddingBottom: spacing.xl },
@@ -156,8 +209,29 @@ const styles = StyleSheet.create({
   saludo: { color: colors.textMuted },
   tituloFila: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   titulo: { color: colors.text, flexShrink: 1 },
-  subtitulo: { color: colors.primaryLight, fontSize: fontSize.sm, marginTop: 2 },
+  filaSubtitulo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+    marginTop: 2,
+  },
+  subtitulo: { color: colors.primaryLight, fontSize: fontSize.sm, flexShrink: 1 },
   hintUbicacion: { color: colors.textFaint, marginTop: 2, lineHeight: 17 },
+
+  contador: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceAlt,
+    flexShrink: 0,
+  },
+  contadorTexto: { color: colors.primaryLight, fontSize: fontSize.xs },
 
   filtros: { marginTop: spacing.lg },
 });

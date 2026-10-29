@@ -512,6 +512,37 @@ export type Database = {
           verificada_en: string | null;
         }[];
       };
+      cuenta_fantasma_id: { Args: Record<PropertyKey, never>; Returns: string | null };
+      cuenta_fantasma_tienda_id: { Args: Record<PropertyKey, never>; Returns: string | null };
+      admin_listar_eliminaciones: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          id: string;
+          usuario_id: string | null;
+          email: string;
+          motivo: string | null;
+          estado: string;
+          created_at: string;
+          resuelto_en: string | null;
+          es_tienda: boolean;
+          tienda: string | null;
+          pedidos: number;
+          tiene_backup: boolean;
+        }[];
+      };
+      admin_marcar_eliminacion_completada: {
+        Args: { p_solicitud_id: string };
+        Returns: undefined;
+      };
+      admin_preparar_eliminacion: {
+        Args: { p_usuario_id: string };
+        Returns: {
+          tienda_anonimizada: boolean;
+          productos_reasignados: number;
+          pedidos_reasignados: number;
+        }[];
+      };
+      contar_tiendas_publicas: { Args: Record<PropertyKey, never>; Returns: number };
     };
 
     Enums: {

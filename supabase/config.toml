@@ -1,0 +1,16 @@
+# ============================================================================
+#  Configuración de Supabase para RepuestosRD
+# ============================================================================
+#
+#  Este archivo lo usa el CLI de Supabase (`supabase functions deploy ...`).
+#  No se conecta a una base local: la base vive en el proyecto en la nube.
+#
+#  `verify_jwt = true` significa que Supabase exige un token válido ANTES de
+#  ejecutar la función. Además, la propia función vuelve a comprobar que quien
+#  llama sea admin. Doble candado a propósito.
+# ============================================================================
+
+project_id = "repuestosrd"
+
+[functions.eliminar-cuenta]
+verify_jwt = true

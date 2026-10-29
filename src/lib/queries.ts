@@ -8,6 +8,7 @@ import type {
   Categoria,
   Compatibilidad,
   DetallePedido,
+  EliminacionAdmin,
   LineaPedidoConNombre,
   Mensaje,
   MiSuscripcion,
@@ -21,6 +22,7 @@ import type {
   ProductoMasVendido,
   ProductoMejorCalificado,
   ResenaProducto,
+  ResultadoPrepararEliminacion,
   SinLeerPedido,
   SolicitudEliminacion,
   Tienda,
@@ -109,6 +111,28 @@ export async function buscarCategorias(): Promise<Categoria[]> {
   if (error) throw error;
 
   return (data ?? []) as Categoria[];
+}
+
+// ============================================================================
+//  tiendas
+//
+//  OJO: la tabla `tiendas` NO se puede consultar directo desde la app. Está
+//  cerrada para `anon` (sin GRANT SELECT, a propósito) y una consulta devuelve
+//  "permission denied for table tiendas". Lo público se lee por vistas y
+//  funciones, igual que `catalogo_productos`.
+//
+//  Por eso el conteo va por la RPC `contar_tiendas_publicas()` (SQL 31), que
+//  devuelve solo un número: no expone ningún dato de las tiendas.
+// ============================================================================
+
+/** Cantidad de tiendas aprobadas (las que se ven en el catálogo). */
+export async function contarTiendas(): Promise<number> {
+  if (!db) return 0;
+
+  const { data, error } = await db.rpc('contar_tiendas_publicas');
+  if (error) throw error;
+
+  return typeof data === 'number' ? data : 0;
 }
 
 // ============================================================================
@@ -939,6 +963,71 @@ export async function solicitarEliminacionCuenta(motivo: string | null): Promise
   if (error) throw error;
 
   return String(data);
+}
+
+// ============================================================================
+//  Eliminación de cuenta (panel de administración)
+//
+//  Requisito de Google Play: la eliminación debe funcionar de verdad. El borrado
+//  de `auth.users` vive en la Edge Function `eliminar-cuenta` (necesita la clave
+//  `service_role`, que nunca viaja al cliente). Acá se listan las solicitudes y
+//  se llama a la función. Las RPC validan `es_admin()` en la base.
+// ============================================================================
+
+/** Solicitudes de eliminación con su contexto. Solo admin. */
+export async function listarEliminaciones(): Promise<EliminacionAdmin[]> {
+  if (!db) return [];
+
+  const { data, error } = await db.rpc('admin_listar_eliminaciones');
+  if (error) throw error;
+
+  return (data ?? []) as EliminacionAdmin[];
+}
+
+/**
+ * Cierra una solicitud de eliminación: prepara los datos, borra la cuenta de
+ * `auth.users` y marca la solicitud como completada.
+ *
+ * Llama a la Edge Function `eliminar-cuenta`, que corre en el servidor de
+ * Supabase (ahí vive la `service_role`). La función valida que quien llama sea
+ * admin antes de hacer nada.
+ */
+export async function eliminarCuentaAdmin(entrada: {
+  usuarioId: string;
+  solicitudId?: string | null;
+}): Promise<ResultadoPrepararEliminacion & { solicitud_cerrada: boolean }> {
+  if (!db) throw new Error('Supabase no está configurado.');
+
+  const { data, error } = await db.functions.invoke('eliminar-cuenta', {
+    body: {
+      usuario_id: entrada.usuarioId,
+      solicitud_id: entrada.solicitudId ?? null,
+    },
+  });
+
+  if (error) {
+    // `FunctionsHttpError` trae el mensaje real del servidor en el cuerpo.
+    let detalle = error.message;
+    try {
+      const cuerpo = await (error as { context?: Response }).context?.json();
+      if (cuerpo?.error) detalle = String(cuerpo.error);
+    } catch {
+      // sin cuerpo legible: nos quedamos con el mensaje genérico
+    }
+    throw new Error(detalle);
+  }
+
+  const respuesta = (data ?? {}) as {
+    detalle?: ResultadoPrepararEliminacion;
+    solicitud_cerrada?: boolean;
+  };
+
+  return {
+    tienda_anonimizada: respuesta.detalle?.tienda_anonimizada ?? false,
+    productos_reasignados: respuesta.detalle?.productos_reasignados ?? 0,
+    pedidos_reasignados: respuesta.detalle?.pedidos_reasignados ?? 0,
+    solicitud_cerrada: respuesta.solicitud_cerrada ?? false,
+  };
 }
 
 // ============================================================================

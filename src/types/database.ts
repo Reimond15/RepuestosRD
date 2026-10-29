@@ -355,6 +355,39 @@ export interface SolicitudEliminacion {
 }
 
 /**
+ * Una solicitud de eliminación de cuenta vista por el admin
+ * (RPC `admin_listar_eliminaciones`). Trae el contexto necesario para decidir
+ * antes de borrar: si es dueño de una tienda, su nombre y cuántos pedidos hay.
+ */
+export interface EliminacionAdmin {
+  id: UUID;
+  usuario_id: UUID | null;
+  email: string;
+  motivo: string | null;
+  estado: 'pendiente' | 'en_proceso' | 'completada';
+  created_at: string;
+  resuelto_en: string | null;
+  /** true si el usuario es dueño de una tienda. */
+  es_tienda: boolean;
+  /** Nombre de la tienda del usuario, si tiene una. */
+  tienda: string | null;
+  /** Cuántos pedidos hizo como comprador (se reasignan a la cuenta fantasma). */
+  pedidos: number;
+  /** true si la cuenta todavía existe en `auth.users` (hay algo que borrar). */
+  tiene_backup: boolean;
+}
+
+/**
+ * Resultado de preparar una eliminación (RPC `admin_preparar_eliminacion`).
+ * Cuenta qué se anonimizó/borró/reasignó antes del borrado definitivo.
+ */
+export interface ResultadoPrepararEliminacion {
+  tienda_anonimizada: boolean;
+  productos_reasignados: number;
+  pedidos_reasignados: number;
+}
+
+/**
  * Reseña pública de un producto (vista `resenas_producto`).
  * A propósito NO trae `cliente_id`: la reseña se muestra en el detalle del
  * producto a cualquiera, sin exponer quién la escribió.

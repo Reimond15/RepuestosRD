@@ -246,6 +246,13 @@ export default function PantallaCuenta() {
             >
               Administrar tipos de repuesto
             </Button>
+            <Button
+              mode="outlined"
+              icon="account-remove-outline"
+              onPress={() => router.push('/admin/eliminaciones')}
+            >
+              Eliminaciones de cuenta
+            </Button>
           </View>
         ) : null}
 
