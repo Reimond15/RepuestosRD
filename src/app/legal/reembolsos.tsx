@@ -10,7 +10,7 @@ export default function PantallaReembolsos() {
         {
           titulo: '1. Compras de repuestos',
           parrafos: [
-            'Cada tienda es responsable de la venta. Como comprador, la ley dominicana (Ley No. 358-05) te reconoce derechos frente a productos defectuosos, y RepuestosRD te ayuda a canalizar el reclamo con la tienda.',
+            'Cada tienda es responsable de la venta. Como comprador, la ley dominicana (Ley No. 358-05) te reconoce derechos frente a productos defectuosos, y RepuGo te ayuda a canalizar el reclamo con la tienda.',
           ],
           vinetas: [
             'Si el repuesto no corresponde a lo publicado o llega con defectos, escribinos y gestionamos el reclamo con la tienda.',
@@ -18,7 +18,7 @@ export default function PantallaReembolsos() {
             'El costo del delivery no forma parte del valor de los repuestos y se coordina aparte.',
           ],
           aviso:
-            'Como RepuestosRD no procesa el pago de los repuestos, el reembolso lo hace directamente la tienda. Nuestro papel es facilitar y dar seguimiento al reclamo.',
+            'Como RepuGo no procesa el pago de los repuestos, el reembolso lo hace directamente la tienda. Nuestro papel es facilitar y dar seguimiento al reclamo.',
         },
         {
           titulo: '2. Suscripción de las tiendas',

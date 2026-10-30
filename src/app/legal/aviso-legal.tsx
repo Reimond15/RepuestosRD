@@ -5,7 +5,7 @@ export default function PantallaAvisoLegal() {
   return (
     <LegalDoc
       titulo="Aviso Legal y Datos del Negocio"
-      intro="Datos de identificación y contacto del responsable de RepuestosRD."
+      intro="Datos de identificación y contacto del responsable de RepuGo."
       secciones={[
         {
           titulo: 'Titular',
@@ -21,7 +21,7 @@ export default function PantallaAvisoLegal() {
         {
           titulo: 'Naturaleza del proyecto',
           parrafos: [
-            'RepuestosRD es un proyecto operado de forma digital por su titular. No cuenta con oficina física ni punto de atención presencial. La atención se brinda por correo electrónico.',
+            'RepuGo es un proyecto operado de forma digital por su titular. No cuenta con oficina física ni punto de atención presencial. La atención se brinda por correo electrónico.',
           ],
         },
         {
@@ -33,7 +33,7 @@ export default function PantallaAvisoLegal() {
         {
           titulo: 'Propiedad intelectual',
           parrafos: [
-            'El nombre, el logotipo y el diseño de RepuestosRD pertenecen a su titular. Las marcas, fotografías y descripciones de los repuestos pertenecen a sus respectivos titulares o a las tiendas que las publican.',
+            'El nombre, el logotipo y el diseño de RepuGo pertenecen a su titular. Las marcas, fotografías y descripciones de los repuestos pertenecen a sus respectivos titulares o a las tiendas que las publican.',
           ],
         },
       ]}

@@ -5,7 +5,7 @@ export default function PantallaCookies() {
   return (
     <LegalDoc
       titulo="Política de Cookies"
-      intro="Acá explicamos qué son las cookies y el almacenamiento local, y qué usa RepuestosRD hoy."
+      intro="Acá explicamos qué son las cookies y el almacenamiento local, y qué usa RepuGo hoy."
       secciones={[
         {
           titulo: '1. Qué son',
@@ -16,7 +16,7 @@ export default function PantallaCookies() {
         {
           titulo: '2. Qué usamos hoy',
           parrafos: [
-            'RepuestosRD no usa cookies de publicidad ni de análisis. En la versión web, la aplicación guarda almacenamiento local estrictamente necesario para que el servicio funcione.',
+            'RepuGo no usa cookies de publicidad ni de análisis. En la versión web, la aplicación guarda almacenamiento local estrictamente necesario para que el servicio funcione.',
           ],
           vinetas: [
             'Almacenamiento necesario: mantiene tu sesión iniciada y conserva tu carrito mientras navegás.',

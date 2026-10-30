@@ -315,7 +315,7 @@ export default function PantallaChat() {
           onDismiss={() => setReportarAbierto(false)}
           onEnviar={enviarReporte}
           titulo="Reportar a esta persona"
-          descripcion="Si alguien rompe las reglas (estafa, acoso, o te pide pagar por fuera), avisanos. El reporte llega solo al equipo de RepuestosRD."
+          descripcion="Si alguien rompe las reglas (estafa, acoso, o te pide pagar por fuera), avisanos. El reporte llega solo al equipo de RepuGo."
         />
 
         <Snackbar

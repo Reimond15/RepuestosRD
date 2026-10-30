@@ -5,18 +5,18 @@ export default function PantallaTerminos() {
   return (
     <LegalDoc
       titulo="Términos y Condiciones"
-      intro="Estos términos regulan el uso de RepuestosRD. Al crear una cuenta o usar la aplicación, los aceptás."
+      intro="Estos términos regulan el uso de RepuGo. Al crear una cuenta o usar la aplicación, los aceptás."
       secciones={[
         {
           titulo: '1. Quién presta el servicio',
           parrafos: [
-            `RepuestosRD es operado por ${NEGOCIO.responsable}, con domicilio en ${NEGOCIO.ciudad}, ${NEGOCIO.pais}. Contacto: ${NEGOCIO.email}.`,
+            `RepuGo es operado por ${NEGOCIO.responsable}, con domicilio en ${NEGOCIO.ciudad}, ${NEGOCIO.pais}. Contacto: ${NEGOCIO.email}.`,
           ],
         },
         {
-          titulo: '2. Qué es RepuestosRD',
+          titulo: '2. Qué es RepuGo',
           parrafos: [
-            'RepuestosRD es una plataforma que conecta a compradores con tiendas de repuestos para motocicletas, carros y guaguas. No vendemos los repuestos ni somos dueños de ellos: el vendedor es la tienda.',
+            'RepuGo es una plataforma que conecta a compradores con tiendas de repuestos para motocicletas, carros y guaguas. No vendemos los repuestos ni somos dueños de ellos: el vendedor es la tienda.',
             'Un pedido es una solicitud de compra dirigida a una tienda. El pedido queda sujeto a la confirmación de la tienda, que puede verificar precio y disponibilidad.',
           ],
           aviso:
@@ -40,7 +40,7 @@ export default function PantallaTerminos() {
             'No usar los datos de contacto obtenidos por la plataforma para fines ajenos al pedido.',
           ],
           aviso:
-            'Cláusula anti-elusión: la tienda se compromete a tramitar a través de RepuestosRD los pedidos que recibe por la plataforma y a no desviar esas operaciones fuera de ella. El incumplimiento puede causar la suspensión o el cierre de la cuenta y la pérdida de la suscripción abonada.',
+            'Cláusula anti-elusión: la tienda se compromete a tramitar a través de RepuGo los pedidos que recibe por la plataforma y a no desviar esas operaciones fuera de ella. El incumplimiento puede causar la suspensión o el cierre de la cuenta y la pérdida de la suscripción abonada.',
         },
         {
           titulo: '5. Planes y suscripción de tiendas',
@@ -96,13 +96,13 @@ export default function PantallaTerminos() {
         {
           titulo: '8. Propiedad intelectual',
           parrafos: [
-            'El nombre, el logo y el diseño de RepuestosRD nos pertenecen. Los repuestos, marcas y fotografías de cada producto pertenecen a la tienda o a sus titulares.',
+            'El nombre, el logo y el diseño de RepuGo nos pertenecen. Los repuestos, marcas y fotografías de cada producto pertenecen a la tienda o a sus titulares.',
           ],
         },
         {
           titulo: '9. Responsabilidad',
           parrafos: [
-            'RepuestosRD facilita el contacto y la gestión de pedidos, pero no fabrica ni garantiza los repuestos: eso corresponde a la tienda y a los derechos que la ley reconoce al consumidor.',
+            'RepuGo facilita el contacto y la gestión de pedidos, pero no fabrica ni garantiza los repuestos: eso corresponde a la tienda y a los derechos que la ley reconoce al consumidor.',
             `Hacemos lo razonable para que el servicio funcione, sin garantizar que esté libre de interrupciones.`,
           ],
         },

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "RepuestosRD",
+    "name": "RepuGo",
     "slug": "repuestosrd",
     "version": "1.0.0",
     "runtimeVersion": {
@@ -37,8 +37,8 @@
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "name": "RepuestosRD",
-      "shortName": "RepuestosRD",
+      "name": "RepuGo",
+      "shortName": "RepuGo",
       "description": "Repuestos para motocicletas, carros y guaguas en República Dominicana. Busca por marca, modelo y año.",
       "themeColor": "#6B7A2F",
       "backgroundColor": "#0D0D0D",
@@ -51,14 +51,14 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "RepuestosRD usa tu ubicación para mostrarte las tiendas y los repuestos más cercanos."
+          "locationWhenInUsePermission": "RepuGo usa tu ubicación para mostrarte las tiendas y los repuestos más cercanos."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "RepuestosRD necesita ver tus fotos para que publiques las imágenes de tus repuestos.",
-          "cameraPermission": "RepuestosRD necesita la cámara para que tomes fotos de tus repuestos.",
+          "photosPermission": "RepuGo necesita ver tus fotos para que publiques las imágenes de tus repuestos.",
+          "cameraPermission": "RepuGo necesita la cámara para que tomes fotos de tus repuestos.",
           "microphonePermission": false
         }
       ],

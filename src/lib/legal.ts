@@ -1,6 +1,6 @@
 export const NEGOCIO = {
-  nombreComercial: 'RepuestosRD',
-  responsable: 'Reimond Peña',
+  nombreComercial: 'RepuGo',
+  responsable: 'RAYTECH',
   rnc: 'En trámite',
   ciudad: 'Santo Domingo Oeste',
   pais: 'República Dominicana',
@@ -25,9 +25,9 @@ export const PAGINAS_LEGALES = [
 ] as const;
 
 export const ELIMINACION = {
-  asunto: 'Solicitud de eliminación de cuenta — RepuestosRD',
+  asunto: 'Solicitud de eliminación de cuenta — RepuGo',
   cuerpo:
-    'Hola: quiero eliminar mi cuenta de RepuestosRD y los datos asociados.\n\n' +
+    'Hola: quiero eliminar mi cuenta de RepuGo y los datos asociados.\n\n' +
     'Correo de la cuenta: \n' +
     'Nombre: \n\n' +
     'Entiendo que se eliminarán mi cuenta y mis datos personales.',

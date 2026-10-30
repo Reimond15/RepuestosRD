@@ -1,4 +1,4 @@
-# Publicar RepuestosRD en Google Play
+# Publicar RepuGo en Google Play
 
 Guía paso a paso, con las respuestas concretas para cada formulario de Play
 Console. Lo que ya está resuelto en el código va marcado como ✅.
@@ -159,7 +159,7 @@ Completá las preguntas de **"Data deletion"** dentro del Data safety:
 
 | Campo | Valor sugerido |
 |---|---|
-| Nombre | `RepuestosRD` |
+| Nombre | `RepuGo` |
 | Descripción corta (80) | `Repuestos de motos, carros y guaguas en RD, por zona.` |
 | Descripción completa | Describí: buscar por marca/modelo/año, tiendas cercanas, pedido y chat interno, retiro o entrega. |
 | Categoría | Compras (o Estilo de vida) |

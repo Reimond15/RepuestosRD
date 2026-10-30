@@ -474,7 +474,7 @@ export default function PantallaProducto() {
         onDismiss={() => setReportarAbierto(false)}
         onEnviar={enviarReporte}
         titulo="Reportar producto"
-        descripcion="Si este producto rompe las reglas (estafa, producto prohibido, fotos que no corresponden), avisanos. El reporte llega solo al equipo de RepuestosRD."
+        descripcion="Si este producto rompe las reglas (estafa, producto prohibido, fotos que no corresponden), avisanos. El reporte llega solo al equipo de RepuGo."
       />
 
       <Snackbar

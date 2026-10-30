@@ -17,13 +17,13 @@ export function AppLogo({ tamano = 34, conNombre = true }: Props) {
           source={require('@/assets/images/logo-app.png')}
           style={{ width: tamano * 0.62, height: tamano * 0.62 }}
           contentFit="contain"
-          accessibilityLabel="RepuestosRD"
+          accessibilityLabel="RepuGo"
         />
       </View>
 
       {conNombre ? (
         <View style={styles.textos}>
-          <Text style={[styles.nombre, { fontSize: tamano * 0.52 }]}>RepuestosRD</Text>
+          <Text style={[styles.nombre, { fontSize: tamano * 0.52 }]}>RepuGo</Text>
           <Text style={[styles.lema, { fontSize: Math.max(9, tamano * 0.26) }]}>
             Santo Domingo Oeste
           </Text>

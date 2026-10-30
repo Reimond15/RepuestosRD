@@ -89,11 +89,7 @@ export default function PantallaInicio() {
                 Motocicletas · Carros · Guaguas
               </Text>
 
-              <ContadorTiendas
-                cantidad={tiendas.cantidad}
-                cargando={tiendas.cargando}
-                esMovil={esMovil}
-              />
+              <ContadorTiendas cantidad={tiendas.cantidad} esMovil={esMovil} />
             </View>
 
             {!ubicado ? (
@@ -148,29 +144,16 @@ export default function PantallaInicio() {
   );
 }
 
-function ContadorTiendas({
-  cantidad,
-  cargando,
-  esMovil,
-}: {
-  cantidad: number | null;
-  cargando: boolean;
-  esMovil: boolean;
-}) {
-  if (cantidad === null && !cargando) return null;
+function ContadorTiendas({ cantidad, esMovil }: { cantidad: number | null; esMovil: boolean }) {
+  if (cantidad === null) return null;
 
-  const texto =
-    cantidad === null
-      ? '— tiendas'
-      : `${numero(cantidad)} ${cantidad === 1 ? 'tienda' : 'tiendas'}`;
+  const texto = `${numero(cantidad)} ${cantidad === 1 ? 'tienda' : 'tiendas'}`;
 
   return (
     <View
       style={styles.contador}
       accessible
-      accessibilityLabel={
-        cantidad === null ? 'Cargando tiendas registradas' : `${numero(cantidad)} tiendas registradas`
-      }
+      accessibilityLabel={`${numero(cantidad)} tiendas registradas`}
     >
       <MaterialCommunityIcons
         name="store-outline"
