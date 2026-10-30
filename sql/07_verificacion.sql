@@ -53,7 +53,7 @@ limit 10;
 
 select producto, tienda, unidades_vendidas
 from public.productos_mas_vendidos
-where categoria_nombre = 'Guaguas'
+where categoria_nombre = 'Autobuses'
 limit 10;
 
 select producto, tienda, categoria_nombre, promedio_estrellas, total_calificaciones

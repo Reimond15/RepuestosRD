@@ -86,7 +86,7 @@ export default function PantallaInicio() {
 
             <View style={styles.filaSubtitulo}>
               <Text style={styles.subtitulo} variant="bodySmall">
-                Motocicletas · Carros · Guaguas
+                Motocicletas · Carros · Autobuses
               </Text>
 
               <ContadorTiendas cantidad={tiendas.cantidad} esMovil={esMovil} />

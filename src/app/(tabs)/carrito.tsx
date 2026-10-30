@@ -78,7 +78,7 @@ export default function PantallaCarrito() {
             <EmptyState
               icono="cart-outline"
               titulo="Tu carrito está vacío"
-              mensaje="Andá a Buscar e elegí los repuestos para tu moto, carro o guagua."
+              mensaje="Andá a Buscar e elegí los repuestos para tu moto, carro o autobús."
             />
           ) : (
             porTienda.map(([tiendaId, items]) => (

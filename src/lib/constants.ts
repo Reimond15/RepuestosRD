@@ -1,7 +1,7 @@
 export const CATEGORIAS = [
   { slug: 'motocicletas', nombre: 'Motocicletas', icono: '🏍️' },
   { slug: 'carros', nombre: 'Carros', icono: '🚗' },
-  { slug: 'guaguas', nombre: 'Guaguas', icono: '🚐' },
+  { slug: 'guaguas', nombre: 'Autobuses', icono: '🚐' },
 ] as const;
 
 export type CategoriaSlug = (typeof CATEGORIAS)[number]['slug'];

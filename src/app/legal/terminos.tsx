@@ -16,7 +16,7 @@ export default function PantallaTerminos() {
         {
           titulo: '2. Qué es RepuGo',
           parrafos: [
-            'RepuGo es una plataforma que conecta a compradores con tiendas de repuestos para motocicletas, carros y guaguas. No vendemos los repuestos ni somos dueños de ellos: el vendedor es la tienda.',
+            'RepuGo es una plataforma que conecta a compradores con tiendas de repuestos para motocicletas, carros y autobuses. No vendemos los repuestos ni somos dueños de ellos: el vendedor es la tienda.',
             'Un pedido es una solicitud de compra dirigida a una tienda. El pedido queda sujeto a la confirmación de la tienda, que puede verificar precio y disponibilidad.',
           ],
           aviso:

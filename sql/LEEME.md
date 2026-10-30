@@ -15,7 +15,7 @@ SQL listo para pegar en el **SQL Editor** de Supabase.
 | 2 | `02_funciones_triggers.sql` | Trigger de registro, validaciones, stock, totales + seguridad P0 |
 | 3 | `03_vistas.sql` | Las 5 vistas (incluye las 2 de ranking) |
 | 4 | `04_rls.sql` | RLS + políticas + permisos de lectura pública |
-| 5 | `05_datos_iniciales.sql` | 3 categorías + tipos de repuesto (motos, carros, guaguas) |
+| 5 | `05_datos_iniciales.sql` | 3 categorías + tipos de repuesto (motos, carros, autobuses) |
 | 6 | `06_storage.sql` | Buckets `productos` y `logos` + políticas |
 | 7 | `07_verificacion.sql` | Opcional: checks y consultas de ejemplo |
 | 8 | `08_datos_demo.sql` | Datos de demostración (3 tiendas aprobadas + 22 productos + 15 pedidos) |
@@ -193,7 +193,7 @@ limit 10;
 -- Filtrado por categoría
 select producto, tienda, unidades_vendidas
 from public.productos_mas_vendidos
-where categoria_nombre = 'Guaguas';
+where categoria_nombre = 'Autobuses';
 ```
 
 ### `productos_mejor_calificados`

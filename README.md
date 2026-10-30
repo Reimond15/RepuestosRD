@@ -25,7 +25,7 @@ Además, ya funcionan:
   (radio de 60 km) y el detalle del producto muestra la tienda con mapa y
   distancia en km.
 - **Búsqueda por checklist** de marca / modelo / año, filtrando por categoría
-  (motos, carros, guaguas).
+  (motos, carros, autobuses).
 - **Stock real**: lo agotado no se puede agregar al carrito y se marca en la
   tarjeta.
 - **Administración de tipos de repuesto** (solo rol `admin`): crear, editar y
@@ -77,7 +77,7 @@ Resumen: crear proyecto → correr los SQL de `Desktop\repuesto` **en orden**
 ### Comprador
 
 1. Entra a **Inicio**: ve los más vendidos y mejor calificados **de su zona**.
-2. **Buscar**: marca moto/carro/guagua y filtra por marca, modelo y año.
+2. **Buscar**: marca moto/carro/autobús y filtra por marca, modelo y año.
 3. Abre un producto: ve precio, stock, compatibilidad, la **tienda con su mapa
    y la distancia en km** desde donde estás, y las **reseñas** de otros
    compradores.
@@ -154,7 +154,7 @@ src/
 │  ├─ SectionProductos.tsx       carrusel horizontal del inicio
 │  ├─ Stars.tsx                  estrellas doradas
 │  ├─ SelectorEstrellas.tsx      estrellas tocables para calificar (1 a 5)
-│  ├─ CategoryChips.tsx          filtro Todos / Motocicletas / Carros / Guaguas
+│  ├─ CategoryChips.tsx          filtro Todos / Motocicletas / Carros / Autobuses
 │  ├─ EmptyState.tsx
 │  ├─ LegalDoc.tsx               plantilla de las páginas legales
 │  ├─ ConsentimientoLegal.tsx    casilla de Términos/Privacidad

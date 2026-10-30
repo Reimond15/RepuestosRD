@@ -1,7 +1,7 @@
 insert into public.categorias (nombre, slug) values
   ('Motocicletas', 'motocicletas'),
   ('Carros',       'carros'),
-  ('Guaguas',      'guaguas')
+  ('Autobuses',    'guaguas')
 on conflict (slug) do update set nombre = excluded.nombre;
 
 insert into public.tipos_repuesto (categoria_id, nombre)

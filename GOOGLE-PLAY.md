@@ -160,7 +160,7 @@ Completá las preguntas de **"Data deletion"** dentro del Data safety:
 | Campo | Valor sugerido |
 |---|---|
 | Nombre | `RepuGo` |
-| Descripción corta (80) | `Repuestos de motos, carros y guaguas en RD, por zona.` |
+| Descripción corta (80) | `Repuestos de motos, carros y autobuses en RD, por zona.` |
 | Descripción completa | Describí: buscar por marca/modelo/año, tiendas cercanas, pedido y chat interno, retiro o entrega. |
 | Categoría | Compras (o Estilo de vida) |
 | Email de contacto | `soporte.repuestord@gmail.com` |
