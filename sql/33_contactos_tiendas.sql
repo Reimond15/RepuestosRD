@@ -99,7 +99,7 @@ as $$
   from public.tiendas t
   join public.usuarios u on u.id = t.dueno_id
   where public.es_admin()
-    and t.dueno_id <> public.cuenta_fantasma_id()
+    and t.dueno_id is distinct from public.cuenta_fantasma_id()
   order by t.aprobada desc, t.nombre asc;
 $$;
 
