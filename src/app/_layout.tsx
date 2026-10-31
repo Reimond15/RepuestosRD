@@ -59,6 +59,10 @@ export default function LayoutRaiz() {
                 options={{ title: 'Tiendas', headerBackTitle: 'Volver' }}
               />
               <Stack.Screen
+                name="admin/contactos"
+                options={{ title: 'Contactos de tiendas', headerBackTitle: 'Volver' }}
+              />
+              <Stack.Screen
                 name="calificar/[pedidoId]"
                 options={{ title: 'Calificar pedido', headerBackTitle: 'Volver' }}
               />

@@ -295,6 +295,16 @@ export interface EliminacionAdmin {
   tiene_backup: boolean;
 }
 
+export interface ContactoTienda {
+  tienda_id: UUID;
+  tienda: string;
+  representante: string | null;
+  telefono: string | null;
+  correo: string;
+  aprobada: boolean;
+  created_at: string;
+}
+
 export interface ResultadoPrepararEliminacion {
   tienda_anonimizada: boolean;
   productos_reasignados: number;

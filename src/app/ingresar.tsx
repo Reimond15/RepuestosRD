@@ -24,6 +24,7 @@ export default function PantallaIngresar() {
   const [telefono, setTelefono] = useState('');
   const [rol, setRol] = useState<'cliente' | 'tienda'>('cliente');
   const [nombreTienda, setNombreTienda] = useState('');
+  const [representante, setRepresentante] = useState('');
   const [direccionTienda, setDireccionTienda] = useState('');
 
   const [cargando, setCargando] = useState(false);
@@ -37,8 +38,12 @@ export default function PantallaIngresar() {
     if (password.length < 6) return 'La contraseña debe tener al menos 6 caracteres.';
     if (modo === 'crear') {
       if (!nombre.trim()) return 'Escribí tu nombre.';
+      if (telefono.replace(/\D/g, '').length < 10)
+        return 'Escribí un teléfono de 10 dígitos (ej. 809-555-1234).';
       if (rol === 'tienda' && !nombreTienda.trim())
         return 'Escribí el nombre de tu tienda.';
+      if (rol === 'tienda' && !representante.trim())
+        return 'Escribí el nombre del representante de la tienda.';
       if (!acepta)
         return 'Tenés que aceptar los Términos y la Política de Privacidad para crear tu cuenta.';
     }
@@ -70,11 +75,12 @@ export default function PantallaIngresar() {
             data: {
               rol,
               nombre: nombre.trim(),
-              telefono: telefono.trim() || null,
+              telefono: telefono.trim(),
               acepta_terminos: new Date().toISOString(),
               ...(rol === 'tienda'
                 ? {
                     nombre_tienda: nombreTienda.trim(),
+                    representante: representante.trim(),
                     direccion: direccionTienda.trim() || null,
                   }
                 : {}),
@@ -154,12 +160,13 @@ export default function PantallaIngresar() {
                   onFocus={alEnfocar}
                 />
                 <TextInput
-                  label="Teléfono (opcional)"
+                  label="Teléfono"
                   value={telefono}
                   onChangeText={setTelefono}
                   mode="outlined"
                   keyboardType="phone-pad"
                   autoComplete="tel"
+                  placeholder="809-555-1234"
                   onFocus={alEnfocar}
                 />
 
@@ -182,6 +189,14 @@ export default function PantallaIngresar() {
                       value={nombreTienda}
                       onChangeText={setNombreTienda}
                       mode="outlined"
+                      onFocus={alEnfocar}
+                    />
+                    <TextInput
+                      label="Nombre del representante"
+                      value={representante}
+                      onChangeText={setRepresentante}
+                      mode="outlined"
+                      autoComplete="name"
                       onFocus={alEnfocar}
                     />
                     <TextInput

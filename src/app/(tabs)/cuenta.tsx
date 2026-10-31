@@ -227,6 +227,13 @@ export default function PantallaCuenta() {
           <View style={styles.adminContenedor}>
             <Button
               mode="outlined"
+              icon="phone-book-outline"
+              onPress={() => router.push('/admin/contactos')}
+            >
+              Contactos de tiendas
+            </Button>
+            <Button
+              mode="outlined"
               icon="store-check-outline"
               onPress={() => router.push('/admin/tiendas')}
             >

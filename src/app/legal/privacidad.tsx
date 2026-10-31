@@ -12,8 +12,8 @@ const SECCIONES: Seccion[] = [
   {
     titulo: '2. Qué datos recogemos',
     vinetas: [
-      'Cuenta: nombre y correo electrónico. El teléfono es opcional.',
-      'Si abrís una tienda: nombre de la tienda y su dirección.',
+      'Cuenta: nombre, correo electrónico y teléfono.',
+      'Si abrís una tienda: nombre de la tienda, nombre del representante y dirección.',
       'Pedidos: los repuestos solicitados, la dirección de entrega (si pedís delivery) y las notas que escribas.',
       'Mensajes: el contenido de los mensajes que envíes por el chat de la aplicación.',
       'Fotos: las imágenes de los repuestos que publique una tienda.',

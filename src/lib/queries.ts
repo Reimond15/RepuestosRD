@@ -7,6 +7,7 @@ import type {
   Calificacion,
   Categoria,
   Compatibilidad,
+  ContactoTienda,
   DetallePedido,
   EliminacionAdmin,
   LineaPedidoConNombre,
@@ -364,6 +365,15 @@ export async function listarTiendasAdmin(): Promise<TiendaAdmin[]> {
   if (error) throw error;
 
   return (data ?? []) as TiendaAdmin[];
+}
+
+export async function listarContactosTiendas(): Promise<ContactoTienda[]> {
+  if (!db) return [];
+
+  const { data, error } = await db.rpc('admin_listar_contactos_tiendas');
+  if (error) throw error;
+
+  return (data ?? []) as ContactoTienda[];
 }
 
 export async function aprobarTienda(tiendaId: string, aprobar: boolean): Promise<void> {
