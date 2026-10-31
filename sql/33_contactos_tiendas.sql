@@ -107,6 +107,7 @@ comment on function public.admin_listar_contactos_tiendas() is
   'Contactos de las tiendas (nombre, representante y telefono) para el administrador. Devuelve vacio si no sos admin.';
 
 revoke all on function public.admin_listar_contactos_tiendas() from public;
+revoke execute on function public.admin_listar_contactos_tiendas() from anon;
 grant execute on function public.admin_listar_contactos_tiendas() to authenticated;
 
 notify pgrst, 'reload schema';
